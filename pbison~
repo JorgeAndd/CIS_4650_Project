@@ -1,0 +1,212 @@
+%{
+	#include <stdlib.h>
+	#include <stdio.h>
+	
+	extern int yylineno;
+	extern char *yytext;
+	
+%}
+
+%union{
+	int ival;
+	float fval;
+	char cval;
+	char *sval;
+}
+
+%define parse.error verbose
+
+%token PLUS MINUS
+%token EQUAL DIFF GE LE
+%token AND OR NOT
+%token TYPEDEF ASSIGN SIZEOF
+%token TKINT TKFLOAT TKCHAR
+%token INC DEC
+%token DOT QUOTE SEMICOLON COMMA 
+%token OBRACES CBRACES OPAR CPAR OBRACKET CBRACKET
+%token IF ELSE FOR WHILE RETURN VOID
+
+%token <ival> INT
+%token <fval> FLOAT
+%token <cval> CHAR
+%token <sval> NAME
+
+%nonassoc THEN
+%nonassoc ELSE
+
+%right ASSIGN
+%left OR
+%left AND
+%left EQUAL DIFF
+%left '<' '>' GE LE
+%left '+' '-'
+%left '*' '/' '%' 
+%right SIZEOF NOT UNMINUS UNPLUS
+%left INC DEC
+
+%%
+program	: type_decl_list global_var_list function_def_list
+		| global_var_list function_def_list
+		| function_def_list
+		|
+;
+
+type_decl_list	: type_decl SEMICOLON
+				| type_decl_list type_decl SEMICOLON
+;
+				
+type_name	: TKINT /*int*/
+			| TKFLOAT
+			| TKCHAR			
+;
+
+type_decl	: TYPEDEF type_name NAME
+			
+global_var_list	: var_decl SEMICOLON
+				| global_var_list var_decl SEMICOLON
+;
+				
+var_decl	: type_name NAME
+;
+
+function_def_list	: function_def
+					| function_def_list function_def
+;
+					
+function_def	: type_name NAME OPAR param_list CPAR OBRACES func_body CBRACES
+				| VOID NAME OPAR param_list CPAR OBRACES func_body CBRACES
+;
+				
+param_list	: var_decl param_decl
+			| 
+;
+
+param_decl	: COMMA var_decl param_decl
+			|
+;
+			
+func_body	: var_decl_list stmt_list
+			| stmt_list
+			|
+;
+
+var_decl_list	: var_decl SEMICOLON
+				| var_decl_list var_decl SEMICOLON
+;
+					
+stmt_list	: stmt
+			| stmt_list stmt
+;
+			
+
+stmt	: expr_stmt
+		| compound_stmt
+		| select_stmt
+		| iter_stmt
+		| return_stmt
+;
+		
+expr_stmt	: expr SEMICOLON
+;
+
+compound_stmt	: OBRACES stmt_list CBRACES
+;
+
+select_stmt : IF OPAR expr CPAR stmt			%prec THEN
+			| IF OPAR expr CPAR stmt ELSE stmt
+;
+
+iter_stmt	: WHILE OPAR expr CPAR stmt 
+			| FOR OPAR expr SEMICOLON expr SEMICOLON expr CPAR stmt
+			| FOR OPAR SEMICOLON expr SEMICOLON expr CPAR stmt
+     	   	| FOR OPAR expr SEMICOLON SEMICOLON expr CPAR stmt
+     	   	| FOR OPAR expr SEMICOLON expr SEMICOLON CPAR stmt
+     	   	| FOR OPAR SEMICOLON SEMICOLON expr CPAR stmt
+     	   	| FOR OPAR expr SEMICOLON SEMICOLON CPAR stmt
+     	   	| FOR OPAR SEMICOLON expr SEMICOLON CPAR stmt
+     	   	| FOR OPAR SEMICOLON SEMICOLON CPAR stmt 
+;
+
+return_stmt	: RETURN expr SEMICOLON
+			| RETURN SEMICOLON
+;
+			
+function_call	: NAME OPAR call_param_list CPAR
+;
+
+call_param_list	: NAME call_param
+				|
+;
+	
+call_param	: COMMA NAME call_param
+			| 
+;
+				
+expr	: expr '+' expr
+		| expr '-' expr
+		| expr '*' expr
+		| expr '/' expr
+		| expr '%' expr
+		| expr '>' expr
+		| expr '<' expr
+		| expr GE expr
+		| expr LE expr
+		| expr DIFF expr
+		| expr EQUAL expr
+		| expr OR expr
+		| expr AND expr
+		| NOT expr 
+		| MINUS expr %prec UNMINUS
+		| PLUS expr %prec UNPLUS
+		| OPAR expr CPAR
+		| function_call
+		| var ASSIGN expr
+		| var
+		| var INC
+		| var DEC
+		| INC var
+		| DEC var
+		| SIZEOF OPAR expr CPAR
+		| SIZEOF OPAR type_name CPAR
+		| constant
+;
+		
+var	: NAME
+	| NAME OBRACKET expr CBRACKET
+	| NAME DOT var
+;
+	
+constant	: const_int
+			| const_float
+			| const_char
+;
+			
+const_int	: INT
+;
+
+const_float	: FLOAT
+;
+
+const_char	: CHAR
+;
+	
+			
+%%
+
+extern FILE *yyin;
+
+int yyerror (char *s) 
+{
+	fprintf(stderr, "%d: %s at %s\n",yylineno, s, yytext);
+}
+
+int yywrap()
+{
+        return 1;
+} 
+
+main()
+{
+	yyparse();
+}
+

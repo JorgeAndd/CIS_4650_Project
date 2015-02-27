@@ -1,0 +1,3174 @@
+State 129 conflicts: 2 shift/reduce
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: type_decl_list global_var_list function_def_list
+
+    2 type_decl_list: type_decl SEMICOLON
+    3               | type_decl_list type_decl SEMICOLON
+
+    4 type_name: TKINT
+    5          | TKFLOAT
+    6          | TKCHAR
+
+    7 type_decl: TYPEDEF NAME type_name
+
+    8 global_var_list: var_decl SEMICOLON
+    9                | global_var_list var_decl SEMICOLON
+
+   10 var_decl: type_name NAME
+
+   11 function_def_list: function_def
+   12                  | function_def_list function_def
+
+   13 function_def: type_name NAME OPAR param_decl CPAR OBRACES func_body CBRACES
+
+   14 param_decl: var_decl
+   15           | param_decl COMMA var_decl
+
+   16 func_body: var_decl_list stmt_list
+
+   17 var_decl_list: var_decl_list var_decl SEMICOLON
+   18              | %empty
+
+   19 stmt_list: stmt_list stmt SEMICOLON
+   20          | %empty
+
+   21 stmt: expr_stmt
+   22     | compound_stmt
+   23     | select_stmt
+   24     | iter_stmt
+   25     | return_stmt
+
+   26 expr_stmt: expr SEMICOLON
+
+   27 compound_stmt: %empty
+
+   28 select_stmt: IF OPAR expr CPAR stmt
+   29            | IF OPAR expr CPAR stmt ELSE stmt
+
+   30 iter_stmt: WHILE OPAR expr CPAR stmt
+   31          | FOR OPAR expr SEMICOLON expr SEMICOLON expr CPAR stmt
+   32          | FOR OPAR SEMICOLON expr SEMICOLON expr CPAR stmt
+   33          | FOR OPAR expr SEMICOLON SEMICOLON expr CPAR stmt
+   34          | FOR OPAR expr SEMICOLON expr SEMICOLON CPAR stmt
+   35          | FOR OPAR SEMICOLON SEMICOLON expr CPAR stmt
+   36          | FOR OPAR expr SEMICOLON SEMICOLON CPAR stmt
+   37          | FOR OPAR SEMICOLON expr SEMICOLON CPAR stmt
+   38          | FOR OPAR SEMICOLON SEMICOLON CPAR stmt
+
+   39 return_stmt: RETURN expr SEMICOLON
+   40            | RETURN SEMICOLON
+
+   41 function_call: NAME OPAR call_param_list CPAR
+
+   42 call_param_list: NAME call_param
+   43                | %empty
+
+   44 call_param: COMMA NAME call_param
+   45           | %empty
+
+   46 expr: expr '+' expr
+   47     | expr '-' expr
+   48     | expr '*' expr
+   49     | expr '/' expr
+   50     | expr '%' expr
+   51     | expr '>' expr
+   52     | expr '<' expr
+   53     | expr GE expr
+   54     | expr LE expr
+   55     | expr DIFF expr
+   56     | expr EQUAL expr
+   57     | expr OR expr
+   58     | expr AND expr
+   59     | NOT expr
+   60     | MINUS expr
+   61     | PLUS expr
+   62     | OPAR expr CPAR
+   63     | function_call
+   64     | var ASSIGN expr
+   65     | var
+   66     | var INC
+   67     | var DEC
+   68     | INC var
+   69     | DEC var
+   70     | SIZEOF OPAR expr CPAR
+   71     | SIZEOF OPAR type_name CPAR
+   72     | constant
+
+   73 var: NAME
+   74    | var OBRACKET expr CBRACKET
+   75    | var DOT var
+
+   76 constant: const_int
+   77         | const_float
+   78         | const_char
+
+   79 const_int: INT
+
+   80 const_float: FLOAT
+
+   81 const_char: QUOTE CHAR QUOTE
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'%' (37) 50
+'*' (42) 48
+'+' (43) 46
+'-' (45) 47
+'/' (47) 49
+'<' (60) 52
+'>' (62) 51
+error (256)
+PLUS (258) 61
+MINUS (259) 60
+EQUAL (260) 56
+DIFF (261) 55
+GE (262) 53
+LE (263) 54
+AND (264) 58
+OR (265) 57
+NOT (266) 59
+TYPEDEF (267) 7
+ASSIGN (268) 64
+SIZEOF (269) 70 71
+TKINT (270) 4
+TKFLOAT (271) 5
+TKCHAR (272) 6
+INC (273) 66 68
+DEC (274) 67 69
+DOT (275) 75
+QUOTE (276) 81
+SEMICOLON (277) 2 3 8 9 17 19 26 31 32 33 34 35 36 37 38 39 40
+COMMA (278) 15 44
+OBRACES (279) 13
+CBRACES (280) 13
+OPAR (281) 13 28 29 30 31 32 33 34 35 36 37 38 41 62 70 71
+CPAR (282) 13 28 29 30 31 32 33 34 35 36 37 38 41 62 70 71
+OBRACKET (283) 74
+CBRACKET (284) 74
+IF (285) 28 29
+ELSE (286) 29
+FOR (287) 31 32 33 34 35 36 37 38
+WHILE (288) 30
+RETURN (289) 39 40
+INT (290) 79
+FLOAT (291) 80
+CHAR (292) 81
+NAME (293) 7 10 13 41 42 44 73
+THEN (294)
+UNMINUS (295)
+UNPLUS (296)
+
+
+Nonterminals, with rules where they appear
+
+$accept (49)
+    on left: 0
+program (50)
+    on left: 1, on right: 0
+type_decl_list (51)
+    on left: 2 3, on right: 1 3
+type_name (52)
+    on left: 4 5 6, on right: 7 10 13 71
+type_decl (53)
+    on left: 7, on right: 2 3
+global_var_list (54)
+    on left: 8 9, on right: 1 9
+var_decl (55)
+    on left: 10, on right: 8 9 14 15 17
+function_def_list (56)
+    on left: 11 12, on right: 1 12
+function_def (57)
+    on left: 13, on right: 11 12
+param_decl (58)
+    on left: 14 15, on right: 13 15
+func_body (59)
+    on left: 16, on right: 13
+var_decl_list (60)
+    on left: 17 18, on right: 16 17
+stmt_list (61)
+    on left: 19 20, on right: 16 19
+stmt (62)
+    on left: 21 22 23 24 25, on right: 19 28 29 30 31 32 33 34 35 36
+    37 38
+expr_stmt (63)
+    on left: 26, on right: 21
+compound_stmt (64)
+    on left: 27, on right: 22
+select_stmt (65)
+    on left: 28 29, on right: 23
+iter_stmt (66)
+    on left: 30 31 32 33 34 35 36 37 38, on right: 24
+return_stmt (67)
+    on left: 39 40, on right: 25
+function_call (68)
+    on left: 41, on right: 63
+call_param_list (69)
+    on left: 42 43, on right: 41
+call_param (70)
+    on left: 44 45, on right: 42 44
+expr (71)
+    on left: 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63
+    64 65 66 67 68 69 70 71 72, on right: 26 28 29 30 31 32 33 34 35
+    36 37 39 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 64
+    70 74
+var (72)
+    on left: 73 74 75, on right: 64 65 66 67 68 69 74 75
+constant (73)
+    on left: 76 77 78, on right: 72
+const_int (74)
+    on left: 79, on right: 76
+const_float (75)
+    on left: 80, on right: 77
+const_char (76)
+    on left: 81, on right: 78
+
+
+State 0
+
+    0 $accept: . program $end
+
+    TYPEDEF  shift, and go to state 1
+
+    program         go to state 2
+    type_decl_list  go to state 3
+    type_decl       go to state 4
+
+
+State 1
+
+    7 type_decl: TYPEDEF . NAME type_name
+
+    NAME  shift, and go to state 5
+
+
+State 2
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 6
+
+
+State 3
+
+    1 program: type_decl_list . global_var_list function_def_list
+    3 type_decl_list: type_decl_list . type_decl SEMICOLON
+
+    TYPEDEF  shift, and go to state 1
+    TKINT    shift, and go to state 7
+    TKFLOAT  shift, and go to state 8
+    TKCHAR   shift, and go to state 9
+
+    type_name        go to state 10
+    type_decl        go to state 11
+    global_var_list  go to state 12
+    var_decl         go to state 13
+
+
+State 4
+
+    2 type_decl_list: type_decl . SEMICOLON
+
+    SEMICOLON  shift, and go to state 14
+
+
+State 5
+
+    7 type_decl: TYPEDEF NAME . type_name
+
+    TKINT    shift, and go to state 7
+    TKFLOAT  shift, and go to state 8
+    TKCHAR   shift, and go to state 9
+
+    type_name  go to state 15
+
+
+State 6
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+State 7
+
+    4 type_name: TKINT .
+
+    $default  reduce using rule 4 (type_name)
+
+
+State 8
+
+    5 type_name: TKFLOAT .
+
+    $default  reduce using rule 5 (type_name)
+
+
+State 9
+
+    6 type_name: TKCHAR .
+
+    $default  reduce using rule 6 (type_name)
+
+
+State 10
+
+   10 var_decl: type_name . NAME
+
+    NAME  shift, and go to state 16
+
+
+State 11
+
+    3 type_decl_list: type_decl_list type_decl . SEMICOLON
+
+    SEMICOLON  shift, and go to state 17
+
+
+State 12
+
+    1 program: type_decl_list global_var_list . function_def_list
+    9 global_var_list: global_var_list . var_decl SEMICOLON
+
+    TKINT    shift, and go to state 7
+    TKFLOAT  shift, and go to state 8
+    TKCHAR   shift, and go to state 9
+
+    type_name          go to state 18
+    var_decl           go to state 19
+    function_def_list  go to state 20
+    function_def       go to state 21
+
+
+State 13
+
+    8 global_var_list: var_decl . SEMICOLON
+
+    SEMICOLON  shift, and go to state 22
+
+
+State 14
+
+    2 type_decl_list: type_decl SEMICOLON .
+
+    $default  reduce using rule 2 (type_decl_list)
+
+
+State 15
+
+    7 type_decl: TYPEDEF NAME type_name .
+
+    $default  reduce using rule 7 (type_decl)
+
+
+State 16
+
+   10 var_decl: type_name NAME .
+
+    $default  reduce using rule 10 (var_decl)
+
+
+State 17
+
+    3 type_decl_list: type_decl_list type_decl SEMICOLON .
+
+    $default  reduce using rule 3 (type_decl_list)
+
+
+State 18
+
+   10 var_decl: type_name . NAME
+   13 function_def: type_name . NAME OPAR param_decl CPAR OBRACES func_body CBRACES
+
+    NAME  shift, and go to state 23
+
+
+State 19
+
+    9 global_var_list: global_var_list var_decl . SEMICOLON
+
+    SEMICOLON  shift, and go to state 24
+
+
+State 20
+
+    1 program: type_decl_list global_var_list function_def_list .
+   12 function_def_list: function_def_list . function_def
+
+    TKINT    shift, and go to state 7
+    TKFLOAT  shift, and go to state 8
+    TKCHAR   shift, and go to state 9
+
+    $default  reduce using rule 1 (program)
+
+    type_name     go to state 25
+    function_def  go to state 26
+
+
+State 21
+
+   11 function_def_list: function_def .
+
+    $default  reduce using rule 11 (function_def_list)
+
+
+State 22
+
+    8 global_var_list: var_decl SEMICOLON .
+
+    $default  reduce using rule 8 (global_var_list)
+
+
+State 23
+
+   10 var_decl: type_name NAME .
+   13 function_def: type_name NAME . OPAR param_decl CPAR OBRACES func_body CBRACES
+
+    OPAR  shift, and go to state 27
+
+    $default  reduce using rule 10 (var_decl)
+
+
+State 24
+
+    9 global_var_list: global_var_list var_decl SEMICOLON .
+
+    $default  reduce using rule 9 (global_var_list)
+
+
+State 25
+
+   13 function_def: type_name . NAME OPAR param_decl CPAR OBRACES func_body CBRACES
+
+    NAME  shift, and go to state 28
+
+
+State 26
+
+   12 function_def_list: function_def_list function_def .
+
+    $default  reduce using rule 12 (function_def_list)
+
+
+State 27
+
+   13 function_def: type_name NAME OPAR . param_decl CPAR OBRACES func_body CBRACES
+
+    TKINT    shift, and go to state 7
+    TKFLOAT  shift, and go to state 8
+    TKCHAR   shift, and go to state 9
+
+    type_name   go to state 10
+    var_decl    go to state 29
+    param_decl  go to state 30
+
+
+State 28
+
+   13 function_def: type_name NAME . OPAR param_decl CPAR OBRACES func_body CBRACES
+
+    OPAR  shift, and go to state 27
+
+
+State 29
+
+   14 param_decl: var_decl .
+
+    $default  reduce using rule 14 (param_decl)
+
+
+State 30
+
+   13 function_def: type_name NAME OPAR param_decl . CPAR OBRACES func_body CBRACES
+   15 param_decl: param_decl . COMMA var_decl
+
+    COMMA  shift, and go to state 31
+    CPAR   shift, and go to state 32
+
+
+State 31
+
+   15 param_decl: param_decl COMMA . var_decl
+
+    TKINT    shift, and go to state 7
+    TKFLOAT  shift, and go to state 8
+    TKCHAR   shift, and go to state 9
+
+    type_name  go to state 10
+    var_decl   go to state 33
+
+
+State 32
+
+   13 function_def: type_name NAME OPAR param_decl CPAR . OBRACES func_body CBRACES
+
+    OBRACES  shift, and go to state 34
+
+
+State 33
+
+   15 param_decl: param_decl COMMA var_decl .
+
+    $default  reduce using rule 15 (param_decl)
+
+
+State 34
+
+   13 function_def: type_name NAME OPAR param_decl CPAR OBRACES . func_body CBRACES
+
+    $default  reduce using rule 18 (var_decl_list)
+
+    func_body      go to state 35
+    var_decl_list  go to state 36
+
+
+State 35
+
+   13 function_def: type_name NAME OPAR param_decl CPAR OBRACES func_body . CBRACES
+
+    CBRACES  shift, and go to state 37
+
+
+State 36
+
+   16 func_body: var_decl_list . stmt_list
+   17 var_decl_list: var_decl_list . var_decl SEMICOLON
+
+    TKINT    shift, and go to state 7
+    TKFLOAT  shift, and go to state 8
+    TKCHAR   shift, and go to state 9
+
+    $default  reduce using rule 20 (stmt_list)
+
+    type_name  go to state 10
+    var_decl   go to state 38
+    stmt_list  go to state 39
+
+
+State 37
+
+   13 function_def: type_name NAME OPAR param_decl CPAR OBRACES func_body CBRACES .
+
+    $default  reduce using rule 13 (function_def)
+
+
+State 38
+
+   17 var_decl_list: var_decl_list var_decl . SEMICOLON
+
+    SEMICOLON  shift, and go to state 40
+
+
+State 39
+
+   16 func_body: var_decl_list stmt_list .
+   19 stmt_list: stmt_list . stmt SEMICOLON
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    IF      shift, and go to state 49
+    FOR     shift, and go to state 50
+    WHILE   shift, and go to state 51
+    RETURN  shift, and go to state 52
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    SEMICOLON  reduce using rule 27 (compound_stmt)
+    $default   reduce using rule 16 (func_body)
+
+    stmt           go to state 56
+    expr_stmt      go to state 57
+    compound_stmt  go to state 58
+    select_stmt    go to state 59
+    iter_stmt      go to state 60
+    return_stmt    go to state 61
+    function_call  go to state 62
+    expr           go to state 63
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 40
+
+   17 var_decl_list: var_decl_list var_decl SEMICOLON .
+
+    $default  reduce using rule 17 (var_decl_list)
+
+
+State 41
+
+   61 expr: PLUS . expr
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 69
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 42
+
+   60 expr: MINUS . expr
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 70
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 43
+
+   59 expr: NOT . expr
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 71
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 44
+
+   70 expr: SIZEOF . OPAR expr CPAR
+   71     | SIZEOF . OPAR type_name CPAR
+
+    OPAR  shift, and go to state 72
+
+
+State 45
+
+   68 expr: INC . var
+
+    NAME  shift, and go to state 73
+
+    var  go to state 74
+
+
+State 46
+
+   69 expr: DEC . var
+
+    NAME  shift, and go to state 73
+
+    var  go to state 75
+
+
+State 47
+
+   81 const_char: QUOTE . CHAR QUOTE
+
+    CHAR  shift, and go to state 76
+
+
+State 48
+
+   62 expr: OPAR . expr CPAR
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 77
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 49
+
+   28 select_stmt: IF . OPAR expr CPAR stmt
+   29            | IF . OPAR expr CPAR stmt ELSE stmt
+
+    OPAR  shift, and go to state 78
+
+
+State 50
+
+   31 iter_stmt: FOR . OPAR expr SEMICOLON expr SEMICOLON expr CPAR stmt
+   32          | FOR . OPAR SEMICOLON expr SEMICOLON expr CPAR stmt
+   33          | FOR . OPAR expr SEMICOLON SEMICOLON expr CPAR stmt
+   34          | FOR . OPAR expr SEMICOLON expr SEMICOLON CPAR stmt
+   35          | FOR . OPAR SEMICOLON SEMICOLON expr CPAR stmt
+   36          | FOR . OPAR expr SEMICOLON SEMICOLON CPAR stmt
+   37          | FOR . OPAR SEMICOLON expr SEMICOLON CPAR stmt
+   38          | FOR . OPAR SEMICOLON SEMICOLON CPAR stmt
+
+    OPAR  shift, and go to state 79
+
+
+State 51
+
+   30 iter_stmt: WHILE . OPAR expr CPAR stmt
+
+    OPAR  shift, and go to state 80
+
+
+State 52
+
+   39 return_stmt: RETURN . expr SEMICOLON
+   40            | RETURN . SEMICOLON
+
+    PLUS       shift, and go to state 41
+    MINUS      shift, and go to state 42
+    NOT        shift, and go to state 43
+    SIZEOF     shift, and go to state 44
+    INC        shift, and go to state 45
+    DEC        shift, and go to state 46
+    QUOTE      shift, and go to state 47
+    SEMICOLON  shift, and go to state 81
+    OPAR       shift, and go to state 48
+    INT        shift, and go to state 53
+    FLOAT      shift, and go to state 54
+    NAME       shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 82
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 53
+
+   79 const_int: INT .
+
+    $default  reduce using rule 79 (const_int)
+
+
+State 54
+
+   80 const_float: FLOAT .
+
+    $default  reduce using rule 80 (const_float)
+
+
+State 55
+
+   41 function_call: NAME . OPAR call_param_list CPAR
+   73 var: NAME .
+
+    OPAR  shift, and go to state 83
+
+    $default  reduce using rule 73 (var)
+
+
+State 56
+
+   19 stmt_list: stmt_list stmt . SEMICOLON
+
+    SEMICOLON  shift, and go to state 84
+
+
+State 57
+
+   21 stmt: expr_stmt .
+
+    $default  reduce using rule 21 (stmt)
+
+
+State 58
+
+   22 stmt: compound_stmt .
+
+    $default  reduce using rule 22 (stmt)
+
+
+State 59
+
+   23 stmt: select_stmt .
+
+    $default  reduce using rule 23 (stmt)
+
+
+State 60
+
+   24 stmt: iter_stmt .
+
+    $default  reduce using rule 24 (stmt)
+
+
+State 61
+
+   25 stmt: return_stmt .
+
+    $default  reduce using rule 25 (stmt)
+
+
+State 62
+
+   63 expr: function_call .
+
+    $default  reduce using rule 63 (expr)
+
+
+State 63
+
+   26 expr_stmt: expr . SEMICOLON
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    EQUAL      shift, and go to state 85
+    DIFF       shift, and go to state 86
+    GE         shift, and go to state 87
+    LE         shift, and go to state 88
+    AND        shift, and go to state 89
+    OR         shift, and go to state 90
+    SEMICOLON  shift, and go to state 91
+    '<'        shift, and go to state 92
+    '>'        shift, and go to state 93
+    '+'        shift, and go to state 94
+    '-'        shift, and go to state 95
+    '*'        shift, and go to state 96
+    '/'        shift, and go to state 97
+    '%'        shift, and go to state 98
+
+
+State 64
+
+   64 expr: var . ASSIGN expr
+   65     | var .
+   66     | var . INC
+   67     | var . DEC
+   74 var: var . OBRACKET expr CBRACKET
+   75    | var . DOT var
+
+    ASSIGN    shift, and go to state 99
+    INC       shift, and go to state 100
+    DEC       shift, and go to state 101
+    DOT       shift, and go to state 102
+    OBRACKET  shift, and go to state 103
+
+    $default  reduce using rule 65 (expr)
+
+
+State 65
+
+   72 expr: constant .
+
+    $default  reduce using rule 72 (expr)
+
+
+State 66
+
+   76 constant: const_int .
+
+    $default  reduce using rule 76 (constant)
+
+
+State 67
+
+   77 constant: const_float .
+
+    $default  reduce using rule 77 (constant)
+
+
+State 68
+
+   78 constant: const_char .
+
+    $default  reduce using rule 78 (constant)
+
+
+State 69
+
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+   61     | PLUS expr .
+
+    $default  reduce using rule 61 (expr)
+
+
+State 70
+
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+   60     | MINUS expr .
+
+    $default  reduce using rule 60 (expr)
+
+
+State 71
+
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+   59     | NOT expr .
+
+    $default  reduce using rule 59 (expr)
+
+
+State 72
+
+   70 expr: SIZEOF OPAR . expr CPAR
+   71     | SIZEOF OPAR . type_name CPAR
+
+    PLUS     shift, and go to state 41
+    MINUS    shift, and go to state 42
+    NOT      shift, and go to state 43
+    SIZEOF   shift, and go to state 44
+    TKINT    shift, and go to state 7
+    TKFLOAT  shift, and go to state 8
+    TKCHAR   shift, and go to state 9
+    INC      shift, and go to state 45
+    DEC      shift, and go to state 46
+    QUOTE    shift, and go to state 47
+    OPAR     shift, and go to state 48
+    INT      shift, and go to state 53
+    FLOAT    shift, and go to state 54
+    NAME     shift, and go to state 55
+
+    type_name      go to state 104
+    function_call  go to state 62
+    expr           go to state 105
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 73
+
+   73 var: NAME .
+
+    $default  reduce using rule 73 (var)
+
+
+State 74
+
+   68 expr: INC var .
+   74 var: var . OBRACKET expr CBRACKET
+   75    | var . DOT var
+
+    DOT       shift, and go to state 102
+    OBRACKET  shift, and go to state 103
+
+    $default  reduce using rule 68 (expr)
+
+
+State 75
+
+   69 expr: DEC var .
+   74 var: var . OBRACKET expr CBRACKET
+   75    | var . DOT var
+
+    DOT       shift, and go to state 102
+    OBRACKET  shift, and go to state 103
+
+    $default  reduce using rule 69 (expr)
+
+
+State 76
+
+   81 const_char: QUOTE CHAR . QUOTE
+
+    QUOTE  shift, and go to state 106
+
+
+State 77
+
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+   62     | OPAR expr . CPAR
+
+    EQUAL  shift, and go to state 85
+    DIFF   shift, and go to state 86
+    GE     shift, and go to state 87
+    LE     shift, and go to state 88
+    AND    shift, and go to state 89
+    OR     shift, and go to state 90
+    CPAR   shift, and go to state 107
+    '<'    shift, and go to state 92
+    '>'    shift, and go to state 93
+    '+'    shift, and go to state 94
+    '-'    shift, and go to state 95
+    '*'    shift, and go to state 96
+    '/'    shift, and go to state 97
+    '%'    shift, and go to state 98
+
+
+State 78
+
+   28 select_stmt: IF OPAR . expr CPAR stmt
+   29            | IF OPAR . expr CPAR stmt ELSE stmt
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 108
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 79
+
+   31 iter_stmt: FOR OPAR . expr SEMICOLON expr SEMICOLON expr CPAR stmt
+   32          | FOR OPAR . SEMICOLON expr SEMICOLON expr CPAR stmt
+   33          | FOR OPAR . expr SEMICOLON SEMICOLON expr CPAR stmt
+   34          | FOR OPAR . expr SEMICOLON expr SEMICOLON CPAR stmt
+   35          | FOR OPAR . SEMICOLON SEMICOLON expr CPAR stmt
+   36          | FOR OPAR . expr SEMICOLON SEMICOLON CPAR stmt
+   37          | FOR OPAR . SEMICOLON expr SEMICOLON CPAR stmt
+   38          | FOR OPAR . SEMICOLON SEMICOLON CPAR stmt
+
+    PLUS       shift, and go to state 41
+    MINUS      shift, and go to state 42
+    NOT        shift, and go to state 43
+    SIZEOF     shift, and go to state 44
+    INC        shift, and go to state 45
+    DEC        shift, and go to state 46
+    QUOTE      shift, and go to state 47
+    SEMICOLON  shift, and go to state 109
+    OPAR       shift, and go to state 48
+    INT        shift, and go to state 53
+    FLOAT      shift, and go to state 54
+    NAME       shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 110
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 80
+
+   30 iter_stmt: WHILE OPAR . expr CPAR stmt
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 111
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 81
+
+   40 return_stmt: RETURN SEMICOLON .
+
+    $default  reduce using rule 40 (return_stmt)
+
+
+State 82
+
+   39 return_stmt: RETURN expr . SEMICOLON
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    EQUAL      shift, and go to state 85
+    DIFF       shift, and go to state 86
+    GE         shift, and go to state 87
+    LE         shift, and go to state 88
+    AND        shift, and go to state 89
+    OR         shift, and go to state 90
+    SEMICOLON  shift, and go to state 112
+    '<'        shift, and go to state 92
+    '>'        shift, and go to state 93
+    '+'        shift, and go to state 94
+    '-'        shift, and go to state 95
+    '*'        shift, and go to state 96
+    '/'        shift, and go to state 97
+    '%'        shift, and go to state 98
+
+
+State 83
+
+   41 function_call: NAME OPAR . call_param_list CPAR
+
+    NAME  shift, and go to state 113
+
+    $default  reduce using rule 43 (call_param_list)
+
+    call_param_list  go to state 114
+
+
+State 84
+
+   19 stmt_list: stmt_list stmt SEMICOLON .
+
+    $default  reduce using rule 19 (stmt_list)
+
+
+State 85
+
+   56 expr: expr EQUAL . expr
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 115
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 86
+
+   55 expr: expr DIFF . expr
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 116
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 87
+
+   53 expr: expr GE . expr
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 117
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 88
+
+   54 expr: expr LE . expr
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 118
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 89
+
+   58 expr: expr AND . expr
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 119
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 90
+
+   57 expr: expr OR . expr
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 120
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 91
+
+   26 expr_stmt: expr SEMICOLON .
+
+    $default  reduce using rule 26 (expr_stmt)
+
+
+State 92
+
+   52 expr: expr '<' . expr
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 121
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 93
+
+   51 expr: expr '>' . expr
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 122
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 94
+
+   46 expr: expr '+' . expr
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 123
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 95
+
+   47 expr: expr '-' . expr
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 124
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 96
+
+   48 expr: expr '*' . expr
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 125
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 97
+
+   49 expr: expr '/' . expr
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 126
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 98
+
+   50 expr: expr '%' . expr
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 127
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 99
+
+   64 expr: var ASSIGN . expr
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 128
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 100
+
+   66 expr: var INC .
+
+    $default  reduce using rule 66 (expr)
+
+
+State 101
+
+   67 expr: var DEC .
+
+    $default  reduce using rule 67 (expr)
+
+
+State 102
+
+   75 var: var DOT . var
+
+    NAME  shift, and go to state 73
+
+    var  go to state 129
+
+
+State 103
+
+   74 var: var OBRACKET . expr CBRACKET
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 130
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 104
+
+   71 expr: SIZEOF OPAR type_name . CPAR
+
+    CPAR  shift, and go to state 131
+
+
+State 105
+
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+   70     | SIZEOF OPAR expr . CPAR
+
+    EQUAL  shift, and go to state 85
+    DIFF   shift, and go to state 86
+    GE     shift, and go to state 87
+    LE     shift, and go to state 88
+    AND    shift, and go to state 89
+    OR     shift, and go to state 90
+    CPAR   shift, and go to state 132
+    '<'    shift, and go to state 92
+    '>'    shift, and go to state 93
+    '+'    shift, and go to state 94
+    '-'    shift, and go to state 95
+    '*'    shift, and go to state 96
+    '/'    shift, and go to state 97
+    '%'    shift, and go to state 98
+
+
+State 106
+
+   81 const_char: QUOTE CHAR QUOTE .
+
+    $default  reduce using rule 81 (const_char)
+
+
+State 107
+
+   62 expr: OPAR expr CPAR .
+
+    $default  reduce using rule 62 (expr)
+
+
+State 108
+
+   28 select_stmt: IF OPAR expr . CPAR stmt
+   29            | IF OPAR expr . CPAR stmt ELSE stmt
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    EQUAL  shift, and go to state 85
+    DIFF   shift, and go to state 86
+    GE     shift, and go to state 87
+    LE     shift, and go to state 88
+    AND    shift, and go to state 89
+    OR     shift, and go to state 90
+    CPAR   shift, and go to state 133
+    '<'    shift, and go to state 92
+    '>'    shift, and go to state 93
+    '+'    shift, and go to state 94
+    '-'    shift, and go to state 95
+    '*'    shift, and go to state 96
+    '/'    shift, and go to state 97
+    '%'    shift, and go to state 98
+
+
+State 109
+
+   32 iter_stmt: FOR OPAR SEMICOLON . expr SEMICOLON expr CPAR stmt
+   35          | FOR OPAR SEMICOLON . SEMICOLON expr CPAR stmt
+   37          | FOR OPAR SEMICOLON . expr SEMICOLON CPAR stmt
+   38          | FOR OPAR SEMICOLON . SEMICOLON CPAR stmt
+
+    PLUS       shift, and go to state 41
+    MINUS      shift, and go to state 42
+    NOT        shift, and go to state 43
+    SIZEOF     shift, and go to state 44
+    INC        shift, and go to state 45
+    DEC        shift, and go to state 46
+    QUOTE      shift, and go to state 47
+    SEMICOLON  shift, and go to state 134
+    OPAR       shift, and go to state 48
+    INT        shift, and go to state 53
+    FLOAT      shift, and go to state 54
+    NAME       shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 135
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 110
+
+   31 iter_stmt: FOR OPAR expr . SEMICOLON expr SEMICOLON expr CPAR stmt
+   33          | FOR OPAR expr . SEMICOLON SEMICOLON expr CPAR stmt
+   34          | FOR OPAR expr . SEMICOLON expr SEMICOLON CPAR stmt
+   36          | FOR OPAR expr . SEMICOLON SEMICOLON CPAR stmt
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    EQUAL      shift, and go to state 85
+    DIFF       shift, and go to state 86
+    GE         shift, and go to state 87
+    LE         shift, and go to state 88
+    AND        shift, and go to state 89
+    OR         shift, and go to state 90
+    SEMICOLON  shift, and go to state 136
+    '<'        shift, and go to state 92
+    '>'        shift, and go to state 93
+    '+'        shift, and go to state 94
+    '-'        shift, and go to state 95
+    '*'        shift, and go to state 96
+    '/'        shift, and go to state 97
+    '%'        shift, and go to state 98
+
+
+State 111
+
+   30 iter_stmt: WHILE OPAR expr . CPAR stmt
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    EQUAL  shift, and go to state 85
+    DIFF   shift, and go to state 86
+    GE     shift, and go to state 87
+    LE     shift, and go to state 88
+    AND    shift, and go to state 89
+    OR     shift, and go to state 90
+    CPAR   shift, and go to state 137
+    '<'    shift, and go to state 92
+    '>'    shift, and go to state 93
+    '+'    shift, and go to state 94
+    '-'    shift, and go to state 95
+    '*'    shift, and go to state 96
+    '/'    shift, and go to state 97
+    '%'    shift, and go to state 98
+
+
+State 112
+
+   39 return_stmt: RETURN expr SEMICOLON .
+
+    $default  reduce using rule 39 (return_stmt)
+
+
+State 113
+
+   42 call_param_list: NAME . call_param
+
+    COMMA  shift, and go to state 138
+
+    $default  reduce using rule 45 (call_param)
+
+    call_param  go to state 139
+
+
+State 114
+
+   41 function_call: NAME OPAR call_param_list . CPAR
+
+    CPAR  shift, and go to state 140
+
+
+State 115
+
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   56     | expr EQUAL expr .
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    GE   shift, and go to state 87
+    LE   shift, and go to state 88
+    '<'  shift, and go to state 92
+    '>'  shift, and go to state 93
+    '+'  shift, and go to state 94
+    '-'  shift, and go to state 95
+    '*'  shift, and go to state 96
+    '/'  shift, and go to state 97
+    '%'  shift, and go to state 98
+
+    $default  reduce using rule 56 (expr)
+
+
+State 116
+
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   55     | expr DIFF expr .
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    GE   shift, and go to state 87
+    LE   shift, and go to state 88
+    '<'  shift, and go to state 92
+    '>'  shift, and go to state 93
+    '+'  shift, and go to state 94
+    '-'  shift, and go to state 95
+    '*'  shift, and go to state 96
+    '/'  shift, and go to state 97
+    '%'  shift, and go to state 98
+
+    $default  reduce using rule 55 (expr)
+
+
+State 117
+
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   53     | expr GE expr .
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    '+'  shift, and go to state 94
+    '-'  shift, and go to state 95
+    '*'  shift, and go to state 96
+    '/'  shift, and go to state 97
+    '%'  shift, and go to state 98
+
+    $default  reduce using rule 53 (expr)
+
+
+State 118
+
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   54     | expr LE expr .
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    '+'  shift, and go to state 94
+    '-'  shift, and go to state 95
+    '*'  shift, and go to state 96
+    '/'  shift, and go to state 97
+    '%'  shift, and go to state 98
+
+    $default  reduce using rule 54 (expr)
+
+
+State 119
+
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+   58     | expr AND expr .
+
+    EQUAL  shift, and go to state 85
+    DIFF   shift, and go to state 86
+    GE     shift, and go to state 87
+    LE     shift, and go to state 88
+    '<'    shift, and go to state 92
+    '>'    shift, and go to state 93
+    '+'    shift, and go to state 94
+    '-'    shift, and go to state 95
+    '*'    shift, and go to state 96
+    '/'    shift, and go to state 97
+    '%'    shift, and go to state 98
+
+    $default  reduce using rule 58 (expr)
+
+
+State 120
+
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   57     | expr OR expr .
+   58     | expr . AND expr
+
+    EQUAL  shift, and go to state 85
+    DIFF   shift, and go to state 86
+    GE     shift, and go to state 87
+    LE     shift, and go to state 88
+    AND    shift, and go to state 89
+    '<'    shift, and go to state 92
+    '>'    shift, and go to state 93
+    '+'    shift, and go to state 94
+    '-'    shift, and go to state 95
+    '*'    shift, and go to state 96
+    '/'    shift, and go to state 97
+    '%'    shift, and go to state 98
+
+    $default  reduce using rule 57 (expr)
+
+
+State 121
+
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   52     | expr '<' expr .
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    '+'  shift, and go to state 94
+    '-'  shift, and go to state 95
+    '*'  shift, and go to state 96
+    '/'  shift, and go to state 97
+    '%'  shift, and go to state 98
+
+    $default  reduce using rule 52 (expr)
+
+
+State 122
+
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   51     | expr '>' expr .
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    '+'  shift, and go to state 94
+    '-'  shift, and go to state 95
+    '*'  shift, and go to state 96
+    '/'  shift, and go to state 97
+    '%'  shift, and go to state 98
+
+    $default  reduce using rule 51 (expr)
+
+
+State 123
+
+   46 expr: expr . '+' expr
+   46     | expr '+' expr .
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    '*'  shift, and go to state 96
+    '/'  shift, and go to state 97
+    '%'  shift, and go to state 98
+
+    $default  reduce using rule 46 (expr)
+
+
+State 124
+
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   47     | expr '-' expr .
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    '*'  shift, and go to state 96
+    '/'  shift, and go to state 97
+    '%'  shift, and go to state 98
+
+    $default  reduce using rule 47 (expr)
+
+
+State 125
+
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   48     | expr '*' expr .
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    $default  reduce using rule 48 (expr)
+
+
+State 126
+
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   49     | expr '/' expr .
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    $default  reduce using rule 49 (expr)
+
+
+State 127
+
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   50     | expr '%' expr .
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    $default  reduce using rule 50 (expr)
+
+
+State 128
+
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+   64     | var ASSIGN expr .
+
+    EQUAL  shift, and go to state 85
+    DIFF   shift, and go to state 86
+    GE     shift, and go to state 87
+    LE     shift, and go to state 88
+    AND    shift, and go to state 89
+    OR     shift, and go to state 90
+    '<'    shift, and go to state 92
+    '>'    shift, and go to state 93
+    '+'    shift, and go to state 94
+    '-'    shift, and go to state 95
+    '*'    shift, and go to state 96
+    '/'    shift, and go to state 97
+    '%'    shift, and go to state 98
+
+    $default  reduce using rule 64 (expr)
+
+
+State 129
+
+   74 var: var . OBRACKET expr CBRACKET
+   75    | var . DOT var
+   75    | var DOT var .
+
+    DOT       shift, and go to state 102
+    OBRACKET  shift, and go to state 103
+
+    DOT       [reduce using rule 75 (var)]
+    OBRACKET  [reduce using rule 75 (var)]
+    $default  reduce using rule 75 (var)
+
+
+State 130
+
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+   74 var: var OBRACKET expr . CBRACKET
+
+    EQUAL     shift, and go to state 85
+    DIFF      shift, and go to state 86
+    GE        shift, and go to state 87
+    LE        shift, and go to state 88
+    AND       shift, and go to state 89
+    OR        shift, and go to state 90
+    CBRACKET  shift, and go to state 141
+    '<'       shift, and go to state 92
+    '>'       shift, and go to state 93
+    '+'       shift, and go to state 94
+    '-'       shift, and go to state 95
+    '*'       shift, and go to state 96
+    '/'       shift, and go to state 97
+    '%'       shift, and go to state 98
+
+
+State 131
+
+   71 expr: SIZEOF OPAR type_name CPAR .
+
+    $default  reduce using rule 71 (expr)
+
+
+State 132
+
+   70 expr: SIZEOF OPAR expr CPAR .
+
+    $default  reduce using rule 70 (expr)
+
+
+State 133
+
+   28 select_stmt: IF OPAR expr CPAR . stmt
+   29            | IF OPAR expr CPAR . stmt ELSE stmt
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    IF      shift, and go to state 49
+    FOR     shift, and go to state 50
+    WHILE   shift, and go to state 51
+    RETURN  shift, and go to state 52
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    $default  reduce using rule 27 (compound_stmt)
+
+    stmt           go to state 142
+    expr_stmt      go to state 57
+    compound_stmt  go to state 58
+    select_stmt    go to state 59
+    iter_stmt      go to state 60
+    return_stmt    go to state 61
+    function_call  go to state 62
+    expr           go to state 63
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 134
+
+   35 iter_stmt: FOR OPAR SEMICOLON SEMICOLON . expr CPAR stmt
+   38          | FOR OPAR SEMICOLON SEMICOLON . CPAR stmt
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    CPAR    shift, and go to state 143
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 144
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 135
+
+   32 iter_stmt: FOR OPAR SEMICOLON expr . SEMICOLON expr CPAR stmt
+   37          | FOR OPAR SEMICOLON expr . SEMICOLON CPAR stmt
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    EQUAL      shift, and go to state 85
+    DIFF       shift, and go to state 86
+    GE         shift, and go to state 87
+    LE         shift, and go to state 88
+    AND        shift, and go to state 89
+    OR         shift, and go to state 90
+    SEMICOLON  shift, and go to state 145
+    '<'        shift, and go to state 92
+    '>'        shift, and go to state 93
+    '+'        shift, and go to state 94
+    '-'        shift, and go to state 95
+    '*'        shift, and go to state 96
+    '/'        shift, and go to state 97
+    '%'        shift, and go to state 98
+
+
+State 136
+
+   31 iter_stmt: FOR OPAR expr SEMICOLON . expr SEMICOLON expr CPAR stmt
+   33          | FOR OPAR expr SEMICOLON . SEMICOLON expr CPAR stmt
+   34          | FOR OPAR expr SEMICOLON . expr SEMICOLON CPAR stmt
+   36          | FOR OPAR expr SEMICOLON . SEMICOLON CPAR stmt
+
+    PLUS       shift, and go to state 41
+    MINUS      shift, and go to state 42
+    NOT        shift, and go to state 43
+    SIZEOF     shift, and go to state 44
+    INC        shift, and go to state 45
+    DEC        shift, and go to state 46
+    QUOTE      shift, and go to state 47
+    SEMICOLON  shift, and go to state 146
+    OPAR       shift, and go to state 48
+    INT        shift, and go to state 53
+    FLOAT      shift, and go to state 54
+    NAME       shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 147
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 137
+
+   30 iter_stmt: WHILE OPAR expr CPAR . stmt
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    IF      shift, and go to state 49
+    FOR     shift, and go to state 50
+    WHILE   shift, and go to state 51
+    RETURN  shift, and go to state 52
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    $default  reduce using rule 27 (compound_stmt)
+
+    stmt           go to state 148
+    expr_stmt      go to state 57
+    compound_stmt  go to state 58
+    select_stmt    go to state 59
+    iter_stmt      go to state 60
+    return_stmt    go to state 61
+    function_call  go to state 62
+    expr           go to state 63
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 138
+
+   44 call_param: COMMA . NAME call_param
+
+    NAME  shift, and go to state 149
+
+
+State 139
+
+   42 call_param_list: NAME call_param .
+
+    $default  reduce using rule 42 (call_param_list)
+
+
+State 140
+
+   41 function_call: NAME OPAR call_param_list CPAR .
+
+    $default  reduce using rule 41 (function_call)
+
+
+State 141
+
+   74 var: var OBRACKET expr CBRACKET .
+
+    $default  reduce using rule 74 (var)
+
+
+State 142
+
+   28 select_stmt: IF OPAR expr CPAR stmt .
+   29            | IF OPAR expr CPAR stmt . ELSE stmt
+
+    ELSE  shift, and go to state 150
+
+    $default  reduce using rule 28 (select_stmt)
+
+
+State 143
+
+   38 iter_stmt: FOR OPAR SEMICOLON SEMICOLON CPAR . stmt
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    IF      shift, and go to state 49
+    FOR     shift, and go to state 50
+    WHILE   shift, and go to state 51
+    RETURN  shift, and go to state 52
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    $default  reduce using rule 27 (compound_stmt)
+
+    stmt           go to state 151
+    expr_stmt      go to state 57
+    compound_stmt  go to state 58
+    select_stmt    go to state 59
+    iter_stmt      go to state 60
+    return_stmt    go to state 61
+    function_call  go to state 62
+    expr           go to state 63
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 144
+
+   35 iter_stmt: FOR OPAR SEMICOLON SEMICOLON expr . CPAR stmt
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    EQUAL  shift, and go to state 85
+    DIFF   shift, and go to state 86
+    GE     shift, and go to state 87
+    LE     shift, and go to state 88
+    AND    shift, and go to state 89
+    OR     shift, and go to state 90
+    CPAR   shift, and go to state 152
+    '<'    shift, and go to state 92
+    '>'    shift, and go to state 93
+    '+'    shift, and go to state 94
+    '-'    shift, and go to state 95
+    '*'    shift, and go to state 96
+    '/'    shift, and go to state 97
+    '%'    shift, and go to state 98
+
+
+State 145
+
+   32 iter_stmt: FOR OPAR SEMICOLON expr SEMICOLON . expr CPAR stmt
+   37          | FOR OPAR SEMICOLON expr SEMICOLON . CPAR stmt
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    CPAR    shift, and go to state 153
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 154
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 146
+
+   33 iter_stmt: FOR OPAR expr SEMICOLON SEMICOLON . expr CPAR stmt
+   36          | FOR OPAR expr SEMICOLON SEMICOLON . CPAR stmt
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    CPAR    shift, and go to state 155
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 156
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 147
+
+   31 iter_stmt: FOR OPAR expr SEMICOLON expr . SEMICOLON expr CPAR stmt
+   34          | FOR OPAR expr SEMICOLON expr . SEMICOLON CPAR stmt
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    EQUAL      shift, and go to state 85
+    DIFF       shift, and go to state 86
+    GE         shift, and go to state 87
+    LE         shift, and go to state 88
+    AND        shift, and go to state 89
+    OR         shift, and go to state 90
+    SEMICOLON  shift, and go to state 157
+    '<'        shift, and go to state 92
+    '>'        shift, and go to state 93
+    '+'        shift, and go to state 94
+    '-'        shift, and go to state 95
+    '*'        shift, and go to state 96
+    '/'        shift, and go to state 97
+    '%'        shift, and go to state 98
+
+
+State 148
+
+   30 iter_stmt: WHILE OPAR expr CPAR stmt .
+
+    $default  reduce using rule 30 (iter_stmt)
+
+
+State 149
+
+   44 call_param: COMMA NAME . call_param
+
+    COMMA  shift, and go to state 138
+
+    $default  reduce using rule 45 (call_param)
+
+    call_param  go to state 158
+
+
+State 150
+
+   29 select_stmt: IF OPAR expr CPAR stmt ELSE . stmt
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    IF      shift, and go to state 49
+    FOR     shift, and go to state 50
+    WHILE   shift, and go to state 51
+    RETURN  shift, and go to state 52
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    $default  reduce using rule 27 (compound_stmt)
+
+    stmt           go to state 159
+    expr_stmt      go to state 57
+    compound_stmt  go to state 58
+    select_stmt    go to state 59
+    iter_stmt      go to state 60
+    return_stmt    go to state 61
+    function_call  go to state 62
+    expr           go to state 63
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 151
+
+   38 iter_stmt: FOR OPAR SEMICOLON SEMICOLON CPAR stmt .
+
+    $default  reduce using rule 38 (iter_stmt)
+
+
+State 152
+
+   35 iter_stmt: FOR OPAR SEMICOLON SEMICOLON expr CPAR . stmt
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    IF      shift, and go to state 49
+    FOR     shift, and go to state 50
+    WHILE   shift, and go to state 51
+    RETURN  shift, and go to state 52
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    $default  reduce using rule 27 (compound_stmt)
+
+    stmt           go to state 160
+    expr_stmt      go to state 57
+    compound_stmt  go to state 58
+    select_stmt    go to state 59
+    iter_stmt      go to state 60
+    return_stmt    go to state 61
+    function_call  go to state 62
+    expr           go to state 63
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 153
+
+   37 iter_stmt: FOR OPAR SEMICOLON expr SEMICOLON CPAR . stmt
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    IF      shift, and go to state 49
+    FOR     shift, and go to state 50
+    WHILE   shift, and go to state 51
+    RETURN  shift, and go to state 52
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    $default  reduce using rule 27 (compound_stmt)
+
+    stmt           go to state 161
+    expr_stmt      go to state 57
+    compound_stmt  go to state 58
+    select_stmt    go to state 59
+    iter_stmt      go to state 60
+    return_stmt    go to state 61
+    function_call  go to state 62
+    expr           go to state 63
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 154
+
+   32 iter_stmt: FOR OPAR SEMICOLON expr SEMICOLON expr . CPAR stmt
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    EQUAL  shift, and go to state 85
+    DIFF   shift, and go to state 86
+    GE     shift, and go to state 87
+    LE     shift, and go to state 88
+    AND    shift, and go to state 89
+    OR     shift, and go to state 90
+    CPAR   shift, and go to state 162
+    '<'    shift, and go to state 92
+    '>'    shift, and go to state 93
+    '+'    shift, and go to state 94
+    '-'    shift, and go to state 95
+    '*'    shift, and go to state 96
+    '/'    shift, and go to state 97
+    '%'    shift, and go to state 98
+
+
+State 155
+
+   36 iter_stmt: FOR OPAR expr SEMICOLON SEMICOLON CPAR . stmt
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    IF      shift, and go to state 49
+    FOR     shift, and go to state 50
+    WHILE   shift, and go to state 51
+    RETURN  shift, and go to state 52
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    $default  reduce using rule 27 (compound_stmt)
+
+    stmt           go to state 163
+    expr_stmt      go to state 57
+    compound_stmt  go to state 58
+    select_stmt    go to state 59
+    iter_stmt      go to state 60
+    return_stmt    go to state 61
+    function_call  go to state 62
+    expr           go to state 63
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 156
+
+   33 iter_stmt: FOR OPAR expr SEMICOLON SEMICOLON expr . CPAR stmt
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    EQUAL  shift, and go to state 85
+    DIFF   shift, and go to state 86
+    GE     shift, and go to state 87
+    LE     shift, and go to state 88
+    AND    shift, and go to state 89
+    OR     shift, and go to state 90
+    CPAR   shift, and go to state 164
+    '<'    shift, and go to state 92
+    '>'    shift, and go to state 93
+    '+'    shift, and go to state 94
+    '-'    shift, and go to state 95
+    '*'    shift, and go to state 96
+    '/'    shift, and go to state 97
+    '%'    shift, and go to state 98
+
+
+State 157
+
+   31 iter_stmt: FOR OPAR expr SEMICOLON expr SEMICOLON . expr CPAR stmt
+   34          | FOR OPAR expr SEMICOLON expr SEMICOLON . CPAR stmt
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    CPAR    shift, and go to state 165
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    function_call  go to state 62
+    expr           go to state 166
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 158
+
+   44 call_param: COMMA NAME call_param .
+
+    $default  reduce using rule 44 (call_param)
+
+
+State 159
+
+   29 select_stmt: IF OPAR expr CPAR stmt ELSE stmt .
+
+    $default  reduce using rule 29 (select_stmt)
+
+
+State 160
+
+   35 iter_stmt: FOR OPAR SEMICOLON SEMICOLON expr CPAR stmt .
+
+    $default  reduce using rule 35 (iter_stmt)
+
+
+State 161
+
+   37 iter_stmt: FOR OPAR SEMICOLON expr SEMICOLON CPAR stmt .
+
+    $default  reduce using rule 37 (iter_stmt)
+
+
+State 162
+
+   32 iter_stmt: FOR OPAR SEMICOLON expr SEMICOLON expr CPAR . stmt
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    IF      shift, and go to state 49
+    FOR     shift, and go to state 50
+    WHILE   shift, and go to state 51
+    RETURN  shift, and go to state 52
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    $default  reduce using rule 27 (compound_stmt)
+
+    stmt           go to state 167
+    expr_stmt      go to state 57
+    compound_stmt  go to state 58
+    select_stmt    go to state 59
+    iter_stmt      go to state 60
+    return_stmt    go to state 61
+    function_call  go to state 62
+    expr           go to state 63
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 163
+
+   36 iter_stmt: FOR OPAR expr SEMICOLON SEMICOLON CPAR stmt .
+
+    $default  reduce using rule 36 (iter_stmt)
+
+
+State 164
+
+   33 iter_stmt: FOR OPAR expr SEMICOLON SEMICOLON expr CPAR . stmt
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    IF      shift, and go to state 49
+    FOR     shift, and go to state 50
+    WHILE   shift, and go to state 51
+    RETURN  shift, and go to state 52
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    $default  reduce using rule 27 (compound_stmt)
+
+    stmt           go to state 168
+    expr_stmt      go to state 57
+    compound_stmt  go to state 58
+    select_stmt    go to state 59
+    iter_stmt      go to state 60
+    return_stmt    go to state 61
+    function_call  go to state 62
+    expr           go to state 63
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 165
+
+   34 iter_stmt: FOR OPAR expr SEMICOLON expr SEMICOLON CPAR . stmt
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    IF      shift, and go to state 49
+    FOR     shift, and go to state 50
+    WHILE   shift, and go to state 51
+    RETURN  shift, and go to state 52
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    $default  reduce using rule 27 (compound_stmt)
+
+    stmt           go to state 169
+    expr_stmt      go to state 57
+    compound_stmt  go to state 58
+    select_stmt    go to state 59
+    iter_stmt      go to state 60
+    return_stmt    go to state 61
+    function_call  go to state 62
+    expr           go to state 63
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 166
+
+   31 iter_stmt: FOR OPAR expr SEMICOLON expr SEMICOLON expr . CPAR stmt
+   46 expr: expr . '+' expr
+   47     | expr . '-' expr
+   48     | expr . '*' expr
+   49     | expr . '/' expr
+   50     | expr . '%' expr
+   51     | expr . '>' expr
+   52     | expr . '<' expr
+   53     | expr . GE expr
+   54     | expr . LE expr
+   55     | expr . DIFF expr
+   56     | expr . EQUAL expr
+   57     | expr . OR expr
+   58     | expr . AND expr
+
+    EQUAL  shift, and go to state 85
+    DIFF   shift, and go to state 86
+    GE     shift, and go to state 87
+    LE     shift, and go to state 88
+    AND    shift, and go to state 89
+    OR     shift, and go to state 90
+    CPAR   shift, and go to state 170
+    '<'    shift, and go to state 92
+    '>'    shift, and go to state 93
+    '+'    shift, and go to state 94
+    '-'    shift, and go to state 95
+    '*'    shift, and go to state 96
+    '/'    shift, and go to state 97
+    '%'    shift, and go to state 98
+
+
+State 167
+
+   32 iter_stmt: FOR OPAR SEMICOLON expr SEMICOLON expr CPAR stmt .
+
+    $default  reduce using rule 32 (iter_stmt)
+
+
+State 168
+
+   33 iter_stmt: FOR OPAR expr SEMICOLON SEMICOLON expr CPAR stmt .
+
+    $default  reduce using rule 33 (iter_stmt)
+
+
+State 169
+
+   34 iter_stmt: FOR OPAR expr SEMICOLON expr SEMICOLON CPAR stmt .
+
+    $default  reduce using rule 34 (iter_stmt)
+
+
+State 170
+
+   31 iter_stmt: FOR OPAR expr SEMICOLON expr SEMICOLON expr CPAR . stmt
+
+    PLUS    shift, and go to state 41
+    MINUS   shift, and go to state 42
+    NOT     shift, and go to state 43
+    SIZEOF  shift, and go to state 44
+    INC     shift, and go to state 45
+    DEC     shift, and go to state 46
+    QUOTE   shift, and go to state 47
+    OPAR    shift, and go to state 48
+    IF      shift, and go to state 49
+    FOR     shift, and go to state 50
+    WHILE   shift, and go to state 51
+    RETURN  shift, and go to state 52
+    INT     shift, and go to state 53
+    FLOAT   shift, and go to state 54
+    NAME    shift, and go to state 55
+
+    $default  reduce using rule 27 (compound_stmt)
+
+    stmt           go to state 171
+    expr_stmt      go to state 57
+    compound_stmt  go to state 58
+    select_stmt    go to state 59
+    iter_stmt      go to state 60
+    return_stmt    go to state 61
+    function_call  go to state 62
+    expr           go to state 63
+    var            go to state 64
+    constant       go to state 65
+    const_int      go to state 66
+    const_float    go to state 67
+    const_char     go to state 68
+
+
+State 171
+
+   31 iter_stmt: FOR OPAR expr SEMICOLON expr SEMICOLON expr CPAR stmt .
+
+    $default  reduce using rule 31 (iter_stmt)
