@@ -78,13 +78,14 @@ extern int yydebug;
     WHILE = 288,
     RETURN = 289,
     VOID = 290,
-    INT = 291,
-    FLOAT = 292,
-    CHAR = 293,
-    NAME = 294,
-    THEN = 295,
-    UNMINUS = 296,
-    UNPLUS = 297
+    STRUCT = 291,
+    INT = 292,
+    FLOAT = 293,
+    CHAR = 294,
+    NAME = 295,
+    THEN = 296,
+    UNMINUS = 297,
+    UNPLUS = 298
   };
 #endif
 /* Tokens.  */
@@ -121,13 +122,14 @@ extern int yydebug;
 #define WHILE 288
 #define RETURN 289
 #define VOID 290
-#define INT 291
-#define FLOAT 292
-#define CHAR 293
-#define NAME 294
-#define THEN 295
-#define UNMINUS 296
-#define UNPLUS 297
+#define STRUCT 291
+#define INT 292
+#define FLOAT 293
+#define CHAR 294
+#define NAME 295
+#define THEN 296
+#define UNMINUS 297
+#define UNPLUS 298
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -141,7 +143,7 @@ union YYSTYPE
 	char cval;
 	char *sval;
 
-#line 145 "y.tab.h" /* yacc.c:1909  */
+#line 147 "y.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
