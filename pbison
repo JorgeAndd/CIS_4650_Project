@@ -97,6 +97,7 @@ param_decl	: COMMA type_name id_name param_decl
 ;
 			
 func_body	: var_decl_list stmt_list
+			| var_decl_list
 			| stmt_list
 			|
 ;
@@ -210,9 +211,15 @@ const_char	: CHAR
 
 extern FILE *yyin;
 
+void warning(char *s, int line)
+{
+	fprintf(stderr, "Warning:\t%d: %s\n", line, s);
+}
+
+
 int yyerror (char *s) 
 {
-	fprintf(stderr, "%d: %s at %s\n",yylineno, s, yytext);
+	fprintf(stderr, "Error:\t\t%d: %s at %s\n",yylineno, s, yytext);
 }
 
 int yywrap()
