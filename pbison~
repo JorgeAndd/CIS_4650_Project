@@ -24,7 +24,7 @@
 %token INC DEC
 %token DOT QUOTE SEMICOLON COMMA 
 %token OBRACES CBRACES OPAR CPAR OBRACKET CBRACKET
-%token IF ELSE FOR WHILE RETURN VOID
+%token IF ELSE FOR WHILE RETURN VOID STRUCT
 
 %token <ival> INT
 %token <fval> FLOAT
@@ -45,8 +45,8 @@
 %left INC DEC
 
 %%
-program	: type_decl_list global_var_list function_def_list
-		| global_var_list function_def_list
+program	: type_decl_list var_decl_list function_def_list
+		| var_decl_list function_def_list
 		| function_def_list
 		|
 ;
@@ -54,20 +54,29 @@ program	: type_decl_list global_var_list function_def_list
 type_decl_list	: type_decl SEMICOLON
 				| type_decl_list type_decl SEMICOLON
 ;
-				
-type_name	: TKINT /*int*/
+
+/*Rule for the basics type: int, float and char	*/
+type_name	: TKINT 
 			| TKFLOAT
-			| TKCHAR			
-;
+			| TKCHAR		
+			;
 
 type_decl	: TYPEDEF type_name NAME
+			| TYPEDEF struct_decl NAME
+			;
 			
-global_var_list	: var_decl SEMICOLON
-				| global_var_list var_decl SEMICOLON
-;
+struct_decl	: STRUCT OBRACES var_decl_list CBRACES
 				
-var_decl	: type_name NAME
-;
+var_decl	: type_name id_list
+			| NAME id_list
+			;
+
+id_list	: id_name
+ 		| id_name COMMA id_list
+		;
+		
+id_name : NAME
+		| NAME OBRACKET INT CBRACKET
 
 function_def_list	: function_def
 					| function_def_list function_def
@@ -77,11 +86,13 @@ function_def	: type_name NAME OPAR param_list CPAR OBRACES func_body CBRACES
 				| VOID NAME OPAR param_list CPAR OBRACES func_body CBRACES
 ;
 				
-param_list	: var_decl param_decl
+param_list	: type_name id_name param_decl
+			| NAME id_name param_decl
 			| 
 ;
 
-param_decl	: COMMA var_decl param_decl
+param_decl	: COMMA type_name id_name param_decl
+			| COMMA NAME id_name param_decl
 			|
 ;
 			
@@ -99,7 +110,7 @@ stmt_list	: stmt
 ;
 			
 
-stmt	: expr_stmt
+stmt	: expr_stmt 
 		| compound_stmt
 		| select_stmt
 		| iter_stmt
@@ -131,15 +142,18 @@ return_stmt	: RETURN expr SEMICOLON
 			| RETURN SEMICOLON
 ;
 			
-function_call	: NAME OPAR call_param_list CPAR
+function_call	: constant OPAR call_param_list CPAR
+				| NAME OPAR call_param_list CPAR
 ;
 
-call_param_list	: NAME call_param
+call_param_list	: constant call_param
+				| NAME call_param
 				|
 ;
 	
 call_param	: COMMA NAME call_param
-			| 
+			| COMMA constant call_param
+			|
 ;
 				
 expr	: expr '+' expr

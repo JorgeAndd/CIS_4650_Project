@@ -121,6 +121,7 @@ expr_stmt	: expr SEMICOLON
 ;
 
 compound_stmt	: OBRACES stmt_list CBRACES
+				| OBRACES CBRACES
 ;
 
 select_stmt : IF OPAR expr CPAR stmt			%prec THEN
@@ -142,15 +143,18 @@ return_stmt	: RETURN expr SEMICOLON
 			| RETURN SEMICOLON
 ;
 			
-function_call	: NAME OPAR call_param_list CPAR
+function_call	: constant OPAR call_param_list CPAR
+				| NAME OPAR call_param_list CPAR
 ;
 
-call_param_list	: NAME call_param
+call_param_list	: constant call_param
+				| NAME call_param
 				|
 ;
 	
 call_param	: COMMA NAME call_param
-			| 
+			| COMMA constant call_param
+			|
 ;
 				
 expr	: expr '+' expr

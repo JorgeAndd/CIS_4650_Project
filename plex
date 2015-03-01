@@ -4,8 +4,14 @@
 %}
 
 %option yylineno
+%x COMMENT
 
 %%
+
+"/*"            { BEGIN(COMMENT); }
+<COMMENT>"*/" { BEGIN(INITIAL); }
+<COMMENT>.    { }
+
 [0-9]+								printf("INT\n"); yylval.ival = atoi(yytext); return INT;
 [0-9]+\.[0-9]+([Ee][+-]?[0-9]+)?	printf("FLOAT\n"); yylval.fval = atof(yytext); return FLOAT;
 \'[a-zA-Z]\'						printf("CHAR\n"); yylval.cval = *yytext; return CHAR;
