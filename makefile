@@ -11,6 +11,6 @@ flex:	plex
 bison:	pbison
 		bison -d -y -v pbison
 		
-compile:	flex bison
-			gcc lex.yy.c y.tab.c -o test
+compile:	bison flex
+			gcc lex.yy.c y.tab.c nodes.c -o test
 
