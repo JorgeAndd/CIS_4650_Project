@@ -1,0 +1,13 @@
+/* Wrong program order */
+
+int main(){
+    int a;
+
+    while(1)
+        a++;
+}
+
+int var;
+
+typedef type;
+

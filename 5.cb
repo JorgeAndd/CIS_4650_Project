@@ -1,0 +1,32 @@
+int var;
+
+typedef type;
+
+int main(){
+    int a;
+
+    while(1)
+        a++;
+}
+
+/* nonclosed
+
+int func1(int a){
+    for(i = 0; i < 10; i++){
+
+    }
+
+    a *= a;	/* incorrect operator */
+	int a; /* misplaced variable declaration */
+
+    return a;
+}
+
+int main(){
+    int a;
+
+    b = func1(a);
+
+/* missing closed braces */
+
+

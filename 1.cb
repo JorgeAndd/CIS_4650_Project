@@ -1,0 +1,44 @@
+typedef int a;
+typedef int b;
+
+typedef struct { int a; } reg;
+
+int var1;
+int var2, var3;
+float _a;
+
+void radixsort(int vetor[2], int tamanho) {
+    int i;
+    int b[5];
+    int maior;
+    int exp;
+
+	/* comment */
+    for (i = 0; i < tamanho; i++) {
+        if (vetor[i] > maior)
+    	    maior = vetor[i];
+    }
+    
+    a = 'a';
+
+	/* comment */
+	a.field = 3;
+	a.field[3].field = 3;
+	a.field[2] = 2;
+	
+    while (maior/exp > 0) {
+    	for (i = 0; i < tamanho; i++)
+    	    bucket[(vetor[i] / exp) % 10]++;
+    	for (i = 1; i < 10; i++)
+    	    bucket[i] = bucket[i - 1];
+    	for (i = tamanho - 1; i >= 0; i--)
+    	    b[--bucket[(vetor[i] / exp) % 10]] = vetor[i];
+    	for (i = 0; i < tamanho; i++)
+    	    vetor[i] = b[i];
+    	exp = exp * 10;
+    }
+    
+    foo(a);
+    foo(a, b, c);
+    
+}
