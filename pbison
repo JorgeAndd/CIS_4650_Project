@@ -24,6 +24,8 @@
 	
 	types_t typeval;
 	
+	TypeDecl *typedeclval;
+	TypeDeclList *typelistval;
 	Stmt *stmtval;
 	Expr *exprval;
 	ExprList *exprlistval;
@@ -31,10 +33,12 @@
 	
 }
 
+%type <typedeclval> type_def
+%type <typelistval> type_decl type_decl_list
 %type <stmtval> stmt
 %type <stmtval> select_stmt
 %type <exprval> expr function_call constant
-%type <exprlistval> call_param_list call_param
+%type <exprlistval> call_param call_param_list 
 %type <varval> var
 %type <typeval> type_name
 
@@ -87,15 +91,21 @@ type_name	: TKINT
 				{ $$ = TYPE_FLOAT; }
 			;
 
-type_decl_list	: type_decl ';'
-				| type_decl_list type_decl ';'
-;
+type_decl_list	: type_def type_decl
+				;
 
-type_decl	: TYPEDEF type_name NAME
-			| TYPEDEF struct_decl NAME
+type_decl	: ';' type_def type_decl
+				{ $$ = TypeDeclList_create($2, $3); }
+			|
+				{ $$ = TypeDeclList_create($<typedeclval>0, NULL); }
+			;
+			
+type_def	: TYPEDEF type_name NAME
+			| TYPEDEF STRUCT struct_decl NAME
 			;
 
-struct_decl	: STRUCT '{' var_decl_list '}'
+struct_decl	: '{' var_decl_list '}'
+			
 			
 var_decl_list	: var_decl ';'
 				| var_decl_list var_decl ';'
@@ -180,6 +190,7 @@ function_call	: NAME '(' call_param_list ')'
 				;
 
 call_param_list	: expr call_param
+					{ $$ = ExprList_create($1, $2); }
 				;
 	
 call_param	: ',' expr call_param
