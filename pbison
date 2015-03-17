@@ -7,6 +7,7 @@
 	#include <string.h>
 	
 	#include "nodes.h"
+	#include "nodeStructs.h"	
 	
 	extern int yylineno;
 	extern char *yytext;
@@ -39,22 +40,18 @@
 }
 
 %type <programval> program
-%type <typedeclval> type_decl struct_decl
+%type <typedeclval> struct_decl
 %type <listval> type_decl_list_start type_decl_list call_param_list_start call_param_list 
 %type <listval> var_decl_list_start var_decl_list stmt_list function_def_list
 %type <listval> id_list
 %type <listval> param_list_start param_list
-%type <stmtval> stmt 
+%type <listval> type_decl var_decl id_name function_def param_decl stmt expr
 %type <stmtval> if_stmt return_stmt iter_stmt compound_stmt
-%type <exprval> expr function_call constant iter_expr
+%type <exprval> function_call constant iter_expr
 %type <varval> var
-%type <vardeclval> var_decl
-%type <idval> id_name
 %type <typeval> type_name
 
-%type <funcval> function_def
 %type <funcbodyval> func_body
-%type <paramval> param_decl
 
 %type <ival> INT
 %token <fval> FLOAT
@@ -118,15 +115,17 @@ type_decl_list_start	: type_decl_list
 						;
 
 type_decl_list	: type_decl ';'
-					{ $$ = TypeDeclList_create($1, NULL); }
+					{ $$ = $1; }
 				| type_decl_list type_decl ';'
-					{ $$ = TypeDeclList_create($2, $1); }
+					{ $$ = Append($1, $2); }
 ;
 
 type_decl	: TYPEDEF type_name NAME
-				{ $$ = Typedef_create($2, $3); }
+				{ TypeDecl *aux = Typedef_create($2, $3);
+				  $$ = TypeDeclList_create(aux, NULL); }
 			| TYPEDEF struct_decl
-				{ $$ = $2; }
+				{ TypeDecl *aux = $2; 
+				  $$ = TypeDeclList_create(aux, NULL); }
 			;
 
 struct_decl	: STRUCT '{' var_decl_list_start '}' NAME
@@ -139,38 +138,43 @@ var_decl_list_start	: var_decl_list
 						{ $$ = NULL; }
 					;
 
-var_decl_list	: var_decl_list var_decl ';'
-					{ $$ = VarDeclList_create($2, $1); }
-				| var_decl ';'
-					{ $$ = VarDeclList_create($1, NULL); }
+var_decl_list	: var_decl ';'
+					{ $$ = $1; }
+				| var_decl_list var_decl ';'
+					{ $$ = Append($1, $2); }
 				;
 
 var_decl	: type_name id_list
-				{ $$ = VarDecl_create($1, $2); }
+				{ VarDecl *aux = VarDecl_create($1, $2);
+				  $$ = VarDeclList_create(aux, NULL); }
 			;
 
-id_list	: id_list ',' id_name
-			{ $$ = IdList_create($3, $1); }
-		| id_name
-			{ $$ = IdList_create($1, NULL); }
+id_list	: id_name
+			{ $$ = $1; }
+		| id_list ',' id_name
+			{ $$ = Append($1, $3); }
 		;	
 		
 id_name : NAME
-			{ $$ = SimpleIdName_create($1); }
+			{ IdName *aux = SimpleIdName_create($1);
+  			  $$ = IdList_create(aux, NULL); }
 		| NAME '[' INT ']'
-			{ $$ = SubscriptIdName_create($1, $3); }
+			{ IdName *aux = SubscriptIdName_create($1, $3); 
+			  $$ = IdList_create(aux, NULL); }
 						
 function_def_list	: function_def
-						{ $$ = FunctionList_create($1, NULL); }
+						{ $$ = $1; }
 					| function_def_list function_def
-						{ $$ = FunctionList_create($2, $1); }
+						{ $$ = Append($1, $2); }
 					;
 					
 function_def	: type_name NAME '(' param_list_start ')' '{' func_body '}'
-					{ $$ = Function_create($1, $2, $4, $7); }
+					{ Function *aux = Function_create($1, $2, $4, $7);
+					  $$ = FunctionList_create(aux, NULL);  }
 				| VOID NAME '(' param_list_start ')' '{' func_body '}'
 					{ TypeName *new = PrimitiveTypeName_create(TYPE_VOID);
-		   			  $$ = Function_create(new, $2, $4, $7); }
+		   			  Function *aux = Function_create(new, $2, $4, $7); 
+					  $$ = FunctionList_create(aux, NULL);  }
 				;
 
 param_list_start	: param_list
@@ -179,15 +183,18 @@ param_list_start	: param_list
 						{ $$ = NULL; }
 					;
 
-param_list	: param_list ',' param_decl
-				{ $$ = ParamList_create($3, $1); }
-			| param_decl
-				{ $$ = ParamList_create($1, NULL); }
+param_list	: param_decl
+				{ $$ = $1; }
+			| param_list ',' param_decl
+				{ $$ = Append($1, $3); }
 			;
 
 param_decl	: type_name id_name
-				{ $$ = Param_create($1, $2); }
-;
+				{ List *aux = $2;
+				  IdName *aux2 = aux->u.id_list.id; 
+   				  Param *aux3 = Param_create($1, aux2);
+   				  $$ =  ParamList_create(aux3, NULL); }
+			;
 			
 func_body	: var_decl_list stmt_list
 				{ $$ = FunctionBody_create($1, $2); }
@@ -200,23 +207,24 @@ func_body	: var_decl_list stmt_list
 			;
 
 				
-stmt_list	: stmt_list stmt
-				{ $$ = StmtList_create($2, $1); }
-			| stmt
-				{ $$ = StmtList_create($1, NULL); }
+stmt_list	: stmt
+				{ $$ = $1; }
+			| stmt_list stmt
+				{ $$ = Append($1, $2); }
 			;
 			
 
 stmt	: expr ';'
-			{ $$ = ExpressionStmt_create($1); }
+			{ Stmt *aux = ExpressionStmt_create($1->u.expr_list.expr); 
+			  $$ = StmtList_create(aux, NULL); } 
 		| compound_stmt
-			{ $$ = $1; }
+			{ $$ = StmtList_create($1, NULL); } 
 		| if_stmt
-			{ $$ = $1; }
+			{ $$ = StmtList_create($1, NULL); } 
 		| iter_stmt
-			{ $$ = $1; }
+			{ $$ = StmtList_create($1, NULL); } 
 		| return_stmt
-			{ $$ = $1; }
+			{ $$ = StmtList_create($1, NULL); } 
 		;
 		
 compound_stmt	: '{' stmt_list '}'
@@ -226,25 +234,34 @@ compound_stmt	: '{' stmt_list '}'
 ;
 
 if_stmt : IF '(' expr ')' stmt			%prec THEN
-				{ $$ = IfStmt_create($3, $5, NULL); }
+				{ Expr *aux = $3->u.expr_list.expr;  
+				  Stmt *aux2 = $5->u.stmt_list.stmt; 
+				  $$ = IfStmt_create(aux, aux2, NULL); }
 			| IF '(' expr ')' stmt ELSE stmt
-				{ $$ = IfStmt_create($3, $5, $7); }
+				{ Expr *aux = $3->u.expr_list.expr;  
+				  Stmt *aux2 = $5->u.stmt_list.stmt;
+				  Stmt *aux3 = $7->u.stmt_list.stmt;
+				  $$ = IfStmt_create(aux, aux2, aux3); }
 ;
 
 iter_stmt	: WHILE '(' expr ')' stmt 
-				{ $$ = IterativeStmt_create(NULL, $3, NULL, $5); }
+				{ Expr *aux = $3->u.expr_list.expr;  
+				  Stmt *aux2 = $5->u.stmt_list.stmt; 
+   				  $$ = IterativeStmt_create(NULL, aux, NULL, aux2); }
 			| FOR '(' iter_expr ';' iter_expr ';' iter_expr ')' stmt 
-				{ $$ = IterativeStmt_create($3, $5, $7, $9); }
+				{ Stmt *aux = $9->u.stmt_list.stmt;
+				  $$ = IterativeStmt_create($3, $5, $7, aux); }
 			;
 
 iter_expr	: expr
-				{ $$ = $1; }
+				{ $$ = $1->u.expr_list.expr; }
 			|
 				{ $$ = NULL; }
 			;		
 
 return_stmt	: RETURN expr ';'
-				{ $$ = ReturnStmt_create($2); }
+				{ Expr *aux = $2->u.expr_list.expr;   
+   				  $$ = ReturnStmt_create(aux); }
 			| RETURN ';'
 				{ $$ = ReturnStmt_create(NULL); }
 ;
@@ -259,71 +276,93 @@ call_param_list_start	: call_param_list
 							{ $$ = NULL; }
 						;
 							
-call_param_list	: call_param_list ',' expr
-					{ $$ = ExprList_create($3, $1); }
-				| expr
-					{ $$ = ExprList_create($1, NULL); } 
+call_param_list	: expr
+					{ $$ = $1; }
+				| call_param_list ',' expr
+					{ $$ = Append($1, $3); }
 				;
 	
-				
 expr	: expr '+' expr
-			{ $$ = BinaryExpr_create($1, OP_ADD, $3); }
+			{ Expr *aux = BinaryExpr_create($1->u.expr_list.expr, OP_ADD, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| expr '-' expr
-			{ $$ = BinaryExpr_create($1, OP_SUB, $3); }
+			{ Expr *aux = BinaryExpr_create($1->u.expr_list.expr, OP_SUB, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| expr '*' expr
-			{ $$ = BinaryExpr_create($1, OP_MULT, $3); }
+			{ Expr *aux = BinaryExpr_create($1->u.expr_list.expr, OP_MULT, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| expr '/' expr
-			{ $$ = BinaryExpr_create($1, OP_DIV, $3); }
+			{ Expr *aux = BinaryExpr_create($1->u.expr_list.expr, OP_DIV, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| expr '%' expr
-			{ $$ = BinaryExpr_create($1, OP_MOD, $3); }
+			{ Expr *aux = BinaryExpr_create($1->u.expr_list.expr, OP_MOD, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| expr '>' expr
-			{ $$ = BinaryExpr_create($1, OP_GT, $3); }
+			{ Expr *aux = BinaryExpr_create($1->u.expr_list.expr, OP_GT, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| expr '<' expr
-			{ $$ = BinaryExpr_create($1, OP_LT, $3); }
+			{ Expr *aux = BinaryExpr_create($1->u.expr_list.expr, OP_LT, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| expr GE expr
-			{ $$ = BinaryExpr_create($1, OP_GE, $3); }
+			{ Expr *aux = BinaryExpr_create($1->u.expr_list.expr, OP_GE, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| expr LE expr
-			{ $$ = BinaryExpr_create($1, OP_LE, $3); }
+			{ Expr *aux = BinaryExpr_create($1->u.expr_list.expr, OP_LE, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| expr DIFF expr
-			{ $$ = BinaryExpr_create($1, OP_DIFF, $3); }
+			{ Expr *aux = BinaryExpr_create($1->u.expr_list.expr, OP_DIFF, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| expr EQUAL expr
-			{ $$ = BinaryExpr_create($1, OP_EQUAL, $3); }
+			{ Expr *aux = BinaryExpr_create($1->u.expr_list.expr, OP_EQUAL, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| expr OR expr
-			{ $$ = BinaryExpr_create($1, OP_OR, $3); }
+			{ Expr *aux = BinaryExpr_create($1->u.expr_list.expr, OP_OR, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| expr AND expr
-			{ $$ = BinaryExpr_create($1, OP_AND, $3); }
+			{ Expr *aux = BinaryExpr_create($1->u.expr_list.expr, OP_AND, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| NOT expr 
-			{ $$ = UnaryExpr_create(OP_NOT, $2); }
+			{ Expr *aux = UnaryExpr_create(OP_NOT, $2->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| '-' expr %prec UNMINUS
-			{ $$ = UnaryExpr_create(OP_MINUS, $2); }
+			{ Expr *aux = UnaryExpr_create(OP_MINUS, $2->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| '+' expr %prec UNPLUS
-			{ $$ = UnaryExpr_create(OP_PLUS, $2); }
+			{ Expr *aux = UnaryExpr_create(OP_PLUS, $2->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| '(' expr ')'
-			{ $$ = $2; }
+			{ $$ = ExprList_create($2->u.expr_list.expr, NULL); }
 		| function_call
-			{ $$ = $1; }
+			{ $$ = ExprList_create($1, NULL); }
 		| var ASSIGN expr
-			{ $$ = AssignExpr_create($1, $3); }
+			{ Expr *aux = AssignExpr_create($1, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| var
-			{ $$ = VarExpr_create($1); }
+			{ Expr *aux = VarExpr_create($1); 
+			  $$ = ExprList_create(aux, NULL); }
 		| expr INC
-			{ $$ = PreOpExpr_create(OP_INC, $1); }
+			{ Expr *aux = PreOpExpr_create(OP_INC, $1->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| expr DEC
-			{ $$ = PreOpExpr_create(OP_DEC, $1); }
+			{ Expr *aux = PreOpExpr_create(OP_DEC, $1->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| INC expr
-			{ $$ = PostOpExpr_create($2, OP_INC); }
+			{ Expr *aux = PostOpExpr_create($2->u.expr_list.expr, OP_INC); 
+			  $$ = ExprList_create(aux, NULL); }
 		| DEC expr
-			{ $$ = PostOpExpr_create($2, OP_DEC); }
+			{ Expr *aux = PostOpExpr_create($2->u.expr_list.expr, OP_DEC); 
+			  $$ = ExprList_create(aux, NULL); }
 		| SIZEOF '(' expr ')'
-			{ $$ = SizeOfExpr_create($3); }
+			{ Expr *aux = SizeOfExpr_create($3->u.expr_list.expr); 
+			  $$ = ExprList_create(aux, NULL); }
 		| constant
-			{ $$ = $1; }
-;
+			{ $$ = ExprList_create($1, NULL); }
+		;
 		
 var	: NAME             /* NAME is a string */
 		{ $$ = SimpleVar_create($1); }
     | var '[' expr ']'
-   		{ $$ = SubscriptVar_create($1, $3); }
+   		{ $$ = SubscriptVar_create($1, $3->u.expr_list.expr); }
     | var '.' var
    		{ $$ = FieldVar_create($1, $3); }
     ;

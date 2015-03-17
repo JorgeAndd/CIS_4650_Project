@@ -1,3 +1,5 @@
+#pragma once
+
 struct Program_t
 {
 	List *type_decl;
@@ -13,7 +15,7 @@ struct VarDecl_t
 
 struct TypeDecl_t
 {
-	enum { TYPE, STRUCT } kind;
+	enum { TYPE_T, STRUCT_T } kind;
 	union
 	{
 		struct { TypeName *type; char *name; } type_def;

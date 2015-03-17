@@ -108,7 +108,7 @@ TypeDecl *Typedef_create(TypeName *type, char *name)
 {
 	TypeDecl *new = calloc(1, sizeof(TypeDecl));
 	
-	new->kind = TYPE;
+	new->kind = TYPE_T;
 	new->u.type_def.type = type;
 	new->u.type_def.name = name;
 	
@@ -119,7 +119,7 @@ TypeDecl *Struct_create(List *var_decl, char *name)
 {
 	TypeDecl *new = calloc(1, sizeof(TypeDecl));
 	
-	new->kind = STRUCT;
+	new->kind = STRUCT_T;
 	new->u.struct_def.var_decl = var_decl;
 	new->u.struct_def.name = name;
 	
@@ -328,6 +328,12 @@ List *FunctionList_create(Function *function, List *next)
 	new->next = next;
 	
 	return new;
+}
+
+List *Append(List *tree, List *next)
+{
+	tree->next = next;
+	return tree;
 }
 
 

@@ -75,6 +75,7 @@ List *VarDeclList_create(VarDecl *varDecl, List *next);
 List *IdList_create(IdName *id, List *next);
 List *ParamList_create(Param *param, List *next);
 List *FunctionList_create(Function *function, List *next);
+List *Append(List *tree, List *next);
 
 Var *SimpleVar_create(char *name);
 Var *FieldVar_create(Var *var, Var *field);

@@ -108,7 +108,7 @@ void printTypeDecl(TypeDecl *node)
 
     switch(node->kind)
     {
-    case TYPE:
+    case TYPE_T:
         fprintf(output, "<typedef>\n");
 		ident(+1);
 		fprintf(output, "<name>%s</name>\n", node->u.type_def.name);
@@ -119,7 +119,7 @@ void printTypeDecl(TypeDecl *node)
         depth--;
         break;
 
-    case STRUCT:
+    case STRUCT_T:
     	fprintf(output, "<struct>\n");
 		ident(+1);
 		fprintf(output, "<name>%s</name>\n", node->u.struct_def.name);
