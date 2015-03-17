@@ -13,6 +13,7 @@
 	extern char linebuf[150];
 	extern int tokenpos;
 	
+	Program *root;
 	
 %}
 
@@ -22,25 +23,38 @@
 	char cval;
 	char *sval;
 	
-	types_t typeval;
-	
+	Program *programval;
+	VarDecl *vardeclval;
 	TypeDecl *typedeclval;
-	TypeDeclList *typelistval;
+	List *listval;
 	Stmt *stmtval;
 	Expr *exprval;
-	ExprList *exprlistval;
 	Var *varval;
+	IdName *idval;
+	TypeName *typeval;
+	Function *funcval;
+	FunctionBody *funcbodyval;
+	Param *paramval;
 	
 }
 
-%type <typedeclval> type_def
-%type <typelistval> type_decl type_decl_list
-%type <stmtval> stmt
-%type <stmtval> select_stmt
-%type <exprval> expr function_call constant
-%type <exprlistval> call_param call_param_list 
+%type <programval> program
+%type <typedeclval> type_decl struct_decl
+%type <listval> type_decl_list_start type_decl_list call_param_list_start call_param_list 
+%type <listval> var_decl_list_start var_decl_list stmt_list function_def_list
+%type <listval> id_list
+%type <listval> param_list_start param_list
+%type <stmtval> stmt 
+%type <stmtval> if_stmt return_stmt iter_stmt compound_stmt
+%type <exprval> expr function_call constant iter_expr
 %type <varval> var
+%type <vardeclval> var_decl
+%type <idval> id_name
 %type <typeval> type_name
+
+%type <funcval> function_def
+%type <funcbodyval> func_body
+%type <paramval> param_decl
 
 %type <ival> INT
 %token <fval> FLOAT
@@ -76,128 +90,181 @@
 %left '[' 
 
 %%
-program	: type_decl_list var_decl_list function_def_list
-		| var_decl_list function_def_list
-		| function_def_list
-		|
-;
+program	: type_decl_list_start
+			{ $$ = Program_create($1, NULL, NULL); root = $$; }
+		| type_decl_list_start var_decl_list function_def_list
+			{ $$ = Program_create($1, $2, $3); root = $$; }
+		| type_decl_list_start var_decl_list
+			{ $$ = Program_create($1, $2, NULL); root = $$; }
+		| type_decl_list_start function_def_list
+			{ $$ = Program_create($1, NULL, $2); root = $$; }
+		;	
 
 /*Rule for the basics type: int, float and char	*/
 type_name	: TKINT 
-				{ $$ = TYPE_INT; }
+				{ $$ = PrimitiveTypeName_create(TYPE_INT); }
 			| TKFLOAT
-				{ $$ = TYPE_FLOAT; }
+				{ $$ = PrimitiveTypeName_create(TYPE_FLOAT); }
 			| TKCHAR		
-				{ $$ = TYPE_FLOAT; }
+				{ $$ = PrimitiveTypeName_create(TYPE_FLOAT); }
+			| NAME
+				{ $$ = UserTypeName_create($1); }
 			;
 
-type_decl_list	: type_def type_decl
+type_decl_list_start	: type_decl_list
+							{ $$ = $1; }
+						|
+							{ $$ = NULL; }
+						;
+
+type_decl_list	: type_decl ';'
+					{ $$ = TypeDeclList_create($1, NULL); }
+				| type_decl_list type_decl ';'
+					{ $$ = TypeDeclList_create($2, $1); }
+;
+
+type_decl	: TYPEDEF type_name NAME
+				{ $$ = Typedef_create($2, $3); }
+			| TYPEDEF struct_decl
+				{ $$ = $2; }
+			;
+
+struct_decl	: STRUCT '{' var_decl_list_start '}' NAME
+				{ $$ = Struct_create($3, $5); }
+			;
+			
+var_decl_list_start	: var_decl_list
+						{ $$ = $1; }
+					|
+						{ $$ = NULL; }
+					;
+
+var_decl_list	: var_decl_list var_decl ';'
+					{ $$ = VarDeclList_create($2, $1); }
+				| var_decl ';'
+					{ $$ = VarDeclList_create($1, NULL); }
 				;
 
-type_decl	: ';' type_def type_decl
-				{ $$ = TypeDeclList_create($2, $3); }
-			|
-				{ $$ = TypeDeclList_create($<typedeclval>0, NULL); }
-			;
-			
-type_def	: TYPEDEF type_name NAME
-			| TYPEDEF STRUCT struct_decl NAME
-			;
-
-struct_decl	: '{' var_decl_list '}'
-			
-			
-var_decl_list	: var_decl ';'
-				| var_decl_list var_decl ';'
-;
-
 var_decl	: type_name id_list
-			| NAME id_list
+				{ $$ = VarDecl_create($1, $2); }
 			;
 
-id_list	: id_name
- 		| id_name ',' id_list
-		;
+id_list	: id_list ',' id_name
+			{ $$ = IdList_create($3, $1); }
+		| id_name
+			{ $$ = IdList_create($1, NULL); }
+		;	
 		
 id_name : NAME
+			{ $$ = SimpleIdName_create($1); }
 		| NAME '[' INT ']'
-
+			{ $$ = SubscriptIdName_create($1, $3); }
+						
 function_def_list	: function_def
+						{ $$ = FunctionList_create($1, NULL); }
 					| function_def_list function_def
-;
+						{ $$ = FunctionList_create($2, $1); }
+					;
 					
-function_def	: type_name NAME '(' param_list ')' '{' func_body '}'
-				| VOID NAME '(' param_list ')' '{' func_body '}'
-;
-				
-param_list	: type_name id_name param_decl
-			| NAME id_name param_decl
-			| 
-;
+function_def	: type_name NAME '(' param_list_start ')' '{' func_body '}'
+					{ $$ = Function_create($1, $2, $4, $7); }
+				| VOID NAME '(' param_list_start ')' '{' func_body '}'
+					{ TypeName *new = PrimitiveTypeName_create(TYPE_VOID);
+		   			  $$ = Function_create(new, $2, $4, $7); }
+				;
 
-param_decl	: ',' type_name id_name param_decl
-			| ',' NAME id_name param_decl
-			|
+param_list_start	: param_list
+						{ $$ = $1; }
+					|
+						{ $$ = NULL; }
+					;
+
+param_list	: param_list ',' param_decl
+				{ $$ = ParamList_create($3, $1); }
+			| param_decl
+				{ $$ = ParamList_create($1, NULL); }
+			;
+
+param_decl	: type_name id_name
+				{ $$ = Param_create($1, $2); }
 ;
 			
 func_body	: var_decl_list stmt_list
+				{ $$ = FunctionBody_create($1, $2); }
 			| var_decl_list
+				{ $$ = FunctionBody_create($1, NULL); }
 			| stmt_list
+				{ $$ = FunctionBody_create(NULL, $1); }
 			|
-;
+				{ $$ = FunctionBody_create(NULL, NULL); }
+			;
 
-					
-stmt_list	: stmt
-			| stmt_list stmt
-;
+				
+stmt_list	: stmt_list stmt
+				{ $$ = StmtList_create($2, $1); }
+			| stmt
+				{ $$ = StmtList_create($1, NULL); }
+			;
 			
 
-stmt	: expr_stmt
+stmt	: expr ';'
+			{ $$ = ExpressionStmt_create($1); }
 		| compound_stmt
-		| select_stmt
+			{ $$ = $1; }
+		| if_stmt
 			{ $$ = $1; }
 		| iter_stmt
+			{ $$ = $1; }
 		| return_stmt
-;
+			{ $$ = $1; }
+		;
 		
-expr_stmt	: expr ';'
-;
-
 compound_stmt	: '{' stmt_list '}'
+					{ $$ = CompoundStmt_create($2); }
 				| '{' '}'
+					{ $$ = NULL; }
 ;
 
-select_stmt : IF '(' expr ')' stmt			%prec THEN
+if_stmt : IF '(' expr ')' stmt			%prec THEN
 				{ $$ = IfStmt_create($3, $5, NULL); }
 			| IF '(' expr ')' stmt ELSE stmt
 				{ $$ = IfStmt_create($3, $5, $7); }
 ;
 
 iter_stmt	: WHILE '(' expr ')' stmt 
+				{ $$ = IterativeStmt_create(NULL, $3, NULL, $5); }
 			| FOR '(' iter_expr ';' iter_expr ';' iter_expr ')' stmt 
+				{ $$ = IterativeStmt_create($3, $5, $7, $9); }
 			;
 
 iter_expr	: expr
+				{ $$ = $1; }
 			|
+				{ $$ = NULL; }
 			;		
 
 return_stmt	: RETURN expr ';'
+				{ $$ = ReturnStmt_create($2); }
 			| RETURN ';'
+				{ $$ = ReturnStmt_create(NULL); }
 ;
 			
-function_call	: NAME '(' call_param_list ')'
+function_call	: NAME '(' call_param_list_start ')'
 					{ $$ = CallExpr_create($1, $3); }
 				;
 
-call_param_list	: expr call_param
-					{ $$ = ExprList_create($1, $2); }
+call_param_list_start	: call_param_list
+							{ $$ = $1; }
+						|  
+							{ $$ = NULL; }
+						;
+							
+call_param_list	: call_param_list ',' expr
+					{ $$ = ExprList_create($3, $1); }
+				| expr
+					{ $$ = ExprList_create($1, NULL); } 
 				;
 	
-call_param	: ',' expr call_param
-			{ $$ = ExprList_create($2, $3); }
-			|
-			{ $$ = ExprList_create($<exprval>0, NULL); }
-;
 				
 expr	: expr '+' expr
 			{ $$ = BinaryExpr_create($1, OP_ADD, $3); }
@@ -249,8 +316,6 @@ expr	: expr '+' expr
 			{ $$ = PostOpExpr_create($2, OP_DEC); }
 		| SIZEOF '(' expr ')'
 			{ $$ = SizeOfExpr_create($3); }
-		| SIZEOF '(' type_name ')'
-			{ $$ = SizeOfTypeExpr_create($3); }
 		| constant
 			{ $$ = $1; }
 ;
@@ -306,6 +371,18 @@ int yywrap()
 
 main()
 {
-	yyparse();
+	int result;
+	
+	result = yyparse();
+	
+	if(result == 0)
+	{
+		printf("Syntax analysis complete. No errors found\n");
+		
+		setPrinter("tree.xml");
+		printProgram(root);
+	}
+		
+	return 0;
 }
 

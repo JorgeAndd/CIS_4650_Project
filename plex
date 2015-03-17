@@ -70,7 +70,8 @@
 			}
 			
 			
-[ \r]+		tokenpos += yyleng;
+[ ]+		tokenpos += yyleng;
+[\r]+
 [\t]		tokenpos += 8;
 .			tokenpos += yyleng; return *yytext;	
 }
