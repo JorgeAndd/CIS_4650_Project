@@ -9,9 +9,16 @@ void setPrinter(char *filename)
 	depth = 0;
 }
 
+void closePrinter()
+{
+	if(output)
+		fclose(output);
+}
+
 void printProgram(Program *node)
 {
 	fprintf(output, "<program>\n");
+	fflush(output);
   
 	if(node->type_decl != NULL)
         printList(node->type_decl);

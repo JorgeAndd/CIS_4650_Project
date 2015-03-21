@@ -11,6 +11,8 @@ struct VarDecl_t
 {
 	TypeName *type_name;	
 	List *id_list;
+		
+	int line;
 };	
 
 struct TypeDecl_t
@@ -21,6 +23,8 @@ struct TypeDecl_t
 		struct { TypeName *type; char *name; } type_def;
 		struct { List *var_decl; char *name; } struct_def;
 	}u;
+		
+	int line;
 };
 
 struct IdName_t
@@ -31,6 +35,8 @@ struct IdName_t
 		struct { char *name; } simple;
 		struct { char *name; int size; } subscript;
 	}u;
+		
+	int line;
 };
 
 struct TypeName_t
@@ -42,6 +48,8 @@ struct TypeName_t
 		struct { types_t type; } primitive;
 		struct { char *type_name; } user;
 	}u;
+		
+	int line;
 };
 
 struct Stmt_t
@@ -55,6 +63,8 @@ struct Stmt_t
 		struct { Expr *init; Expr *cond; Expr *incr; Stmt *body; } iters;
 		struct { List *stmt_list; } compounds;
 	}u;
+	
+	int line;
 };
 
 struct Expr_t
@@ -81,6 +91,8 @@ struct Expr_t
 		struct { float value; } floatexpr;
 		struct { char value; } charexpr;
 	}u;
+		
+	int line;
 };
 
 struct Var_t
@@ -92,6 +104,8 @@ struct Var_t
 		struct { Var *var; Expr *subscript; } subscript;
 		struct { Var *var; Var *field; } field;
 	}u;
+		
+	int line;
 };
 
 struct Function_t
@@ -101,18 +115,24 @@ struct Function_t
 	
 	List *param_list;
 	FunctionBody *body;
+		
+	int line;
 };
 
 struct FunctionBody_t
 {
 	List *varDecl_list;
 	List *stmt_list;
+		
+	int line;
 };
 
 struct Param_t
 {
 	TypeName *type;
 	IdName *id;
+		
+	int line;
 };
 
 /* Lists */
@@ -133,4 +153,6 @@ struct List_t
 	}u;
 	
 	List *next;
+		
+	int line;
 };

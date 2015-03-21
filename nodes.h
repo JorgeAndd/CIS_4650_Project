@@ -31,53 +31,53 @@ typedef struct List_t List;
 
 Program *Program_create(List *type_decl, List *var_decl, List *function_def);
 
-VarDecl *VarDecl_create(TypeName *type_name, List *id_list);
+VarDecl *VarDecl_create(int line, TypeName *type_name, List *id_list);
 
-IdName *SimpleIdName_create(char *name);
-IdName *SubscriptIdName_create(char *name, int size);
+IdName *SimpleIdName_create(int line, char *name);
+IdName *SubscriptIdName_create(int line, char *name, int size);
 
-TypeName *PrimitiveTypeName_create(types_t type);
-TypeName *UserTypeName_create(char *type_name);
+TypeName *PrimitiveTypeName_create(int line, types_t type);
+TypeName *UserTypeName_create(int line, char *type_name);
 
-Stmt *ExpressionStmt_create(Expr *expr);
-Stmt *IfStmt_create(Expr *test, Stmt *thenpart, Stmt *elsepart);
-Stmt *ReturnStmt_create(Expr *value);
-Stmt *IterativeStmt_create(Expr *init, Expr *cond, Expr *incr, Stmt *body);
-Stmt *CompoundStmt_create(List *stmt_list);
+Stmt *ExpressionStmt_create(int line, Expr *expr);
+Stmt *IfStmt_create(int line, Expr *test, Stmt *thenpart, Stmt *elsepart);
+Stmt *ReturnStmt_create(int line, Expr *value);
+Stmt *IterativeStmt_create(int line, Expr *init, Expr *cond, Expr *incr, Stmt *body);
+Stmt *CompoundStmt_create(int line, List *stmt_list);
 
-TypeDecl *Typedef_create(TypeName *type, char *name);
-TypeDecl *Struct_create(List *var_decl, char *name);
+TypeDecl *Typedef_create(int line, TypeName *type, char *name);
+TypeDecl *Struct_create(int line, List *var_decl, char *name);
 
-Expr *BinaryExpr_create(Expr *operand1, bin_operator_t op, Expr *operand2);
-Expr *UnaryExpr_create(un_operator_t op, Expr *operand);
+Expr *BinaryExpr_create(int line, Expr *operand1, bin_operator_t op, Expr *operand2);
+Expr *UnaryExpr_create(int line, un_operator_t op, Expr *operand);
 
-Expr *PreOpExpr_create(un_operator_t op, Expr *operand);
-Expr *PostOpExpr_create(Expr *operand, un_operator_t op);
+Expr *PreOpExpr_create(int line, un_operator_t op, Expr *operand);
+Expr *PostOpExpr_create(int line, Expr *operand, un_operator_t op);
 
-Expr *CallExpr_create(char *id, List *param_list);
-Expr *AssignExpr_create(Var *var, Expr *expr);
-Expr *SizeOfExpr_create(Expr *size);
-Expr *SizeOfTypeExpr_create(types_t type);
-Expr *VarExpr_create(Var *var);
+Expr *CallExpr_create(int line, char *id, List *param_list);
+Expr *AssignExpr_create(int line, Var *var, Expr *expr);
+Expr *SizeOfExpr_create(int line, Expr *size);
+Expr *SizeOfTypeExpr_create(int line, types_t type);
+Expr *VarExpr_create(int line, Var *var);
 
-Expr *IntExpr_create(int value);
-Expr *FloatExpr_create(float value);
-Expr *CharExpr_create(char value);
+Expr *IntExpr_create(int line, int value);
+Expr *FloatExpr_create(int line, float value);
+Expr *CharExpr_create(int line, char value);
 
-Function *Function_create(TypeName *type, char *name, List *param_list, FunctionBody *body);
-FunctionBody *FunctionBody_create(List *varDecl_list, List *stmt_list);
-Param *Param_create(TypeName *type, IdName *id);
+Function *Function_create(int line, TypeName *type, char *name, List *param_list, FunctionBody *body);
+FunctionBody *FunctionBody_create(int line, List *varDecl_list, List *stmt_list);
+Param *Param_create(int line, TypeName *type, IdName *id);
 
-List *ExprList_create(Expr *expr, List *next);
-List *StmtList_create(Stmt *stmt, List *next);
-List *TypeDeclList_create(TypeDecl *type, List *next);
-List *VarDeclList_create(VarDecl *varDecl, List *next);
-List *IdList_create(IdName *id, List *next);
-List *ParamList_create(Param *param, List *next);
-List *FunctionList_create(Function *function, List *next);
+List *ExprList_create(int line, Expr *expr, List *next);
+List *StmtList_create(int line, Stmt *stmt, List *next);
+List *TypeDeclList_create(int line, TypeDecl *type, List *next);
+List *VarDeclList_create(int line, VarDecl *varDecl, List *next);
+List *IdList_create(int line, IdName *id, List *next);
+List *ParamList_create(int line, Param *param, List *next);
+List *FunctionList_create(int line, Function *function, List *next);
 List *Append(List *tree, List *next);
 
-Var *SimpleVar_create(char *name);
-Var *FieldVar_create(Var *var, Var *field);
-Var *SubscriptVar_create(Var *var, Expr *subscript);
+Var *SimpleVar_create(int line, char *name);
+Var *FieldVar_create(int line, Var *var, Var *field);
+Var *SubscriptVar_create(int line, Var *var, Expr *subscript);
 

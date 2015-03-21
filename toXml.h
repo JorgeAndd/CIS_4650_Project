@@ -4,6 +4,7 @@
 
 void ident(int depthChange);
 void printProgram(Program *node);
+void closePrinter();
 void printList(List *node);
 void printTypeDecl(TypeDecl *node);
 void printTypeName(TypeName *node);
