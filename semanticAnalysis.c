@@ -268,12 +268,39 @@ NodeValue processExpr(Expr *node)
 		
 		break;		
 	case SIZEOFEXPR:
-		processExpr(node->u.sizeofexpr.size);
+		left = processExpr(node->u.sizeofexpr.size);
+		
+		if(left.type == -1)
+		{
+			returnValue.type = -1;
+			return returnValue;
+		}
+		
+		//Need to process size of expression 
+		returnValue.type = TYPE_INT;
+		return returnValue;
+		
 		break;		
 	case SIZEOFTYPEEXPR:
+		//Not implemented correctly yet
+		
+		//Need to process size of expression 
+		returnValue.type = TYPE_INT;
+		return returnValue;
+
 		break;		
 	case VAREXPR:
-		processVar(node->u.varexpr.var);
+		left = processVar(node->u.varexpr.var);
+		
+		if(left.type == -1)
+		{
+			returnValue.type = -1;
+			return returnValue;
+		}
+		
+		returnValue.type = left.type;
+		return returnValue;
+		
 		break;
 	case INTEXPR:
 		returnValue.type = TYPE_INT;
