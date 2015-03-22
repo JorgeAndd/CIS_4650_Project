@@ -15,4 +15,4 @@ bison:	pbison
 		bison -d -y -v pbison
 		
 compile:	bison flex
-			gcc -g lex.yy.c y.tab.c nodes.c toXml.c -o cflatc
+			gcc -g lex.yy.c y.tab.c nodes.c toXml.c semanticAnalysis.c symbolTable.c -o cflatc
