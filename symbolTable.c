@@ -4,6 +4,58 @@
 
 List_node* hashTable[T_SIZE];
 
+Symbol* createVarSymbol(char *name, types_t type, int size)
+{
+	Symbol *newSymbol = malloc(sizeof(Symbol));
+	
+	newSymbol->name = name;
+	newSymbol->type = type;
+	newSymbol->size = size;
+	newSymbol->params = NULL;
+	
+	return newSymbol;
+}
+
+Symbol* createFuncSymbol(char *name, types_t type, int size)
+{
+	Symbol *newSymbol = malloc(sizeof(Symbol));
+	
+	newSymbol->name = name;
+	newSymbol->type = type;
+	newSymbol->size = size;
+	newSymbol->params = NULL;
+	
+	return newSymbol;
+}
+
+void addParam(Symbol **symbol, types_t type)
+{
+	if((*symbol)->params == NULL)
+	{
+		SParam *newParam = malloc(sizeof(SParam));
+		
+		newParam->type = type;
+		newParam->next = NULL;
+		
+		(*symbol)->params = newParam;
+		
+		return;
+	}
+	
+	SParam *newParam = malloc(sizeof(SParam));
+		
+	newParam->type = type;
+	newParam->next = NULL;
+	
+	SParam *aux = (*symbol)->params;
+	while(aux->next != NULL)
+		aux = aux->next;
+		
+	aux->next = newParam;
+	
+	return;
+}
+
 //Put symbol in the hashTable
 void putSymbol(Symbol *symbol)
 {

@@ -4,22 +4,30 @@
 
 #include "nodes.h"
 
+#pragma once
+
+typedef struct SParam
+{
+	types_t type;
+	struct SParam *next;
+}SParam;
+
 typedef struct
 {
 	enum { VAR, FUNC } kind;
-	
-	union
-	{
-		struct { } var_symbol;
-		struct { } func_symbol; //To be defined
-	} u;
 	
 	char *name;
 	types_t type;
 	
 	//int loc;
 	int size;
+	
+	SParam *params; 
 }Symbol;
+
+Symbol* createVarSymbol(char *name, types_t type, int size);
+Symbol* createFuncSymbol(char *name, types_t type, int size);
+void addParam(Symbol **symbol, types_t type);
 
 typedef struct Stack_node
 {

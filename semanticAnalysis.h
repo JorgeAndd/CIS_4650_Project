@@ -3,7 +3,8 @@
 #include "symbolTable.h"
 #include <stdio.h>
 
-typedef enum { TYPE_ERR, UNDECLARED_ERR } error_t;
+typedef enum { TYPE_ERR, UNDECLARED_ERR, F_UNDECLARED_ERR, ARGUMENT_TYPE_ERR,
+				 ARGUMENT_NUMBER_ERR } error_t;
 
 typedef struct
 {
@@ -15,6 +16,7 @@ void processList(List *node);
 void processTypeDecl(TypeDecl *node);
 void processTypeName(TypeName *node);
 NodeValue processExpr(Expr *node);
+NodeValue processCall(Expr *call);
 void processVarDecl(VarDecl *node);
 void processFunction(Function *node);
 void processParam(Param *node);

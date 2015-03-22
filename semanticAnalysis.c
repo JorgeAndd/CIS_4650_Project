@@ -1,8 +1,25 @@
 #include "semanticAnalysis.h"
 
+void init()
+{
+	Symbol *newSymbol = createFuncSymbol("putc", TYPE_CHAR, 0);
+	addParam(&newSymbol, TYPE_CHAR);
+	putSymbol(newSymbol);
+	
+	newSymbol = createFuncSymbol("puti", TYPE_INT, 0);
+	addParam(&newSymbol, TYPE_INT);
+	putSymbol(newSymbol);
+	
+	newSymbol = createFuncSymbol("putf", TYPE_FLOAT, 0);
+	addParam(&newSymbol, TYPE_FLOAT);
+	putSymbol(newSymbol);
+	
+}
+
 void processProgram(Program *node)
 {  
 	FILE *tty = fopen("/dev/tty", "r");
+	init();
 	
 	//if(node->type_decl != NULL)
      //   processList(node->type_decl);	
@@ -97,11 +114,12 @@ void processVarDecl(VarDecl *node)
 	List *id = node->id_list;
 	
 	do{
-		newSymbol = malloc(sizeof(Symbol));
+		char *name;
+		int size;
 		
-		processIdName(id->u.id_list.id, &(newSymbol->name), &(newSymbol->size));
-		newSymbol->size *= 4;
-		newSymbol->type = type;
+		processIdName(id->u.id_list.id, &name, &size);
+		
+		newSymbol = createVarSymbol(name, type, size);
 		
 		putSymbol(newSymbol);
 		
@@ -126,15 +144,30 @@ void processIdName(IdName *node, char **name, int *size)
 
 void processFunction(Function *node)
 {
-	fprintf(stderr,"func\n");
-	processTypeName(node->type);
-	processList(node->param_list);
+	types_t type = node->type->u.primitive.type;
+	char *name = node->name;
+	int size = 4;
+	
+	Symbol *newSymbol = createFuncSymbol(name, type, size);
+	
+	List *param = node->param_list;
+	while(param != NULL)
+	{
+		TypeName *typeName = (param->u.param_list.param)->type;
+		type = typeName->u.primitive.type;
+		
+		addParam(&newSymbol, type);
+	
+		param = param->next;
+	}
+
+	putSymbol(newSymbol);
+
 	processFuncBody(node->body);
 }
 
 void processFuncBody(FunctionBody *node)
 {
-	fprintf(stderr,"func_body\n");
 	processList(node->varDecl_list);
 	processList(node->stmt_list);
 }
@@ -160,6 +193,12 @@ NodeValue processExpr(Expr *node)
 		left = processExpr(node->u.bexpr.operand1);
 		right = processExpr(node->u.bexpr.operand2);
 		
+		if(left.type == -1 || right.type == -1)
+		{
+			returnValue.type = -1;
+			return returnValue;
+		}	
+		
 		if(left.type == right.type)
 			return left;
 		else
@@ -171,19 +210,46 @@ NodeValue processExpr(Expr *node)
 		break;
 		
 	case UEXPR:
-		processExpr(node->u.uexpr.operand);
+		left = processExpr(node->u.uexpr.operand);
+		
+		if(left.type == -1)
+		{
+			returnValue.type = -1;
+			return returnValue;
+		}	
+		
+		return left;
+		
 		break;
 
 	case PREOPEXPR:
-		processExpr(node->u.preopexpr.operand);
+		left = processExpr(node->u.uexpr.operand);
+		
+		if(left.type == -1)
+		{
+			returnValue.type = -1;
+			return returnValue;
+		}	
+		
+		return left;
 		break;
 			
 	case POSTOPEXPR:
-		processExpr(node->u.postopexpr.operand);
+		left = processExpr(node->u.uexpr.operand);
+		
+		if(left.type == -1)
+		{
+			returnValue.type = -1;
+			return returnValue;
+		}	
+		
+		return left;
+		
 		break;		
 		
 	case CALLEXPR:
-		processList(node->u.callexpr.param_list);
+		return processCall(node);
+		
 		break;		
 	case ASSIGNEXPR:
 		left = processVar(node->u.assignexpr.var);
@@ -222,6 +288,60 @@ NodeValue processExpr(Expr *node)
 		return returnValue;
 
 	}
+	
+}
+
+NodeValue processCall(Expr *call)
+{
+	Symbol *symbol;
+	int result;
+	NodeValue returnValue;
+
+	result = getSymbol(call->u.callexpr.id, &symbol);
+		
+	if(result == 0)
+	{
+		returnValue.type = symbol->type;
+	}else
+	{
+		reportError(F_UNDECLARED_ERR, call->line);
+		returnValue.type = -1;
+		return returnValue;
+	}
+	
+	List *params1 = call->u.callexpr.param_list;
+	SParam *params2 = symbol->params;
+	
+	while(params1 != NULL && params2 != NULL)
+	{	
+		returnValue = processExpr(params1->u.expr_list.expr);
+		
+		if(returnValue.type == -1)
+		{
+			returnValue.type = -1;
+			return returnValue;
+		}	
+		
+		types_t type1 = returnValue.type;
+		types_t type2 = params2->type;
+		if(type1 != type2)
+		{
+			reportError(ARGUMENT_TYPE_ERR, call->line);
+			returnValue.type = -1;
+			return returnValue;
+		}
+	
+		params1 = params1->next;
+		params2 = params2->next;
+	}
+	
+	if(params1 != NULL || params2 != NULL)
+	{
+		reportError(ARGUMENT_NUMBER_ERR, call->line);
+		returnValue.type = -1;
+		return returnValue;
+	}
+		
 	
 }
 
@@ -294,10 +414,19 @@ void reportError(error_t error, int line)
 	switch(error)
 	{
 	case TYPE_ERR:
-		fprintf(stderr, "ERROR: Incompatible types on line %d\n", line);
+		fprintf(stderr, "%d: error: Incompatible types\n", line);
 		break;
 	case UNDECLARED_ERR:
-		fprintf(stderr, "ERROR: Variable undeclared on line %d\n", line);
+		fprintf(stderr, "%d: error: Variable undeclared\n", line);
+		break;
+	case F_UNDECLARED_ERR:
+		fprintf(stderr, "%d: error: Function undeclared\n", line);
+		break;
+	case ARGUMENT_TYPE_ERR:
+		fprintf(stderr, "%d: error: Incorrect argument type on function call\n", line);
+		break;
+	case ARGUMENT_NUMBER_ERR:
+		fprintf(stderr, "%d: error: Incorrect number of arguments on function call\n", line);
 		break;
 	}
 }
