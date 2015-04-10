@@ -2484,10 +2484,9 @@ int main(int argc, char *argv[])
 		file_name[i] = '\0';
 	
 		FILE *tty = fopen("/dev/tty", "r");
-		printf("Syntax analysis complete. No errors found\n");
+		printf("Syntax analysis complete. No errors found\n\n");
 		
 		setPrinter("tree.xml");
-		printf("Setted");
 		printProgram(root);
 		closePrinter();
 		

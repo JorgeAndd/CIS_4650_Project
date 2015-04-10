@@ -2,25 +2,6 @@
 
 Quadruples *instructions = NULL;
 
-int numDigits(int n)
-{
-	int neg = 0;
-	if(n < 0)
-		neg = 1;
-	
-    if (n < 0) n = -n;
-    if (n < 10) return 1 + neg;
-    if (n < 100) return 2 + neg;
-    if (n < 1000) return 3 + neg;
-    if (n < 10000) return 4 + neg;
-    if (n < 100000) return 5 + neg;
-    if (n < 1000000) return 6 + neg;
-    if (n < 10000000) return 7 + neg;
-    if (n < 100000000) return 8 + neg;
-    if (n < 1000000000) return 9 + neg;
-    return 10 + neg;	
-}
-
 char* getNewTemp()
 {
 	static int tempCount = 0;
@@ -302,12 +283,12 @@ NodeValue processExpr(Expr *node)
 		left = processExpr(node->u.uexpr.operand);
 		
 		if(left.type == -1)
-		{
-			returnValue.type = -1;
-			return returnValue;
-		}	
+			return left;
 		
-		return left;
+		returnValue.name = getNewTemp();
+		addInstruction(node->u.uexpr.op, left.name, "", returnValue.name);
+		
+		return returnValue;
 		
 		break;
 
@@ -391,18 +372,22 @@ NodeValue processExpr(Expr *node)
 		break;
 	case INTEXPR:
 		returnValue.type = TYPE_INT;
-		n = numDigits(node->u.intexpr.value);
-		printf("n digits = %d\n", n);
-		
-		//returnValue.name = malloc(sizeof(char)*
+		returnValue.name = malloc(sizeof(char) * 30);
+		sprintf(returnValue.name, "%d", node->u.intexpr.value);
 		return returnValue;
 			
 	case FLOATEXPR:
 		returnValue.type = TYPE_FLOAT;
+		returnValue.type = TYPE_FLOAT;
+		returnValue.name = malloc(sizeof(char) * 30);
+		sprintf(returnValue.name, "%f", node->u.floatexpr.value);
 		return returnValue;
 		
 	case CHAREXPR:
 		returnValue.type = TYPE_CHAR;
+		returnValue.type = TYPE_CHAR;
+		returnValue.name = malloc(sizeof(char) * 2);
+		sprintf(returnValue.name, "%c", node->u.charexpr.value);
 		return returnValue;
 
 	}
