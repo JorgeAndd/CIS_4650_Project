@@ -138,7 +138,7 @@ TypeDecl *Struct_create(int line, List *var_decl, char *name)
 }
 
 
-Expr *BinaryExpr_create(int line, Expr *operand1, bin_operator_t op, Expr *operand2)
+Expr *BinaryExpr_create(int line, Expr *operand1, operator_t op, Expr *operand2)
 {
 	Expr *new = calloc(1, sizeof(Expr));
 	
@@ -151,7 +151,7 @@ Expr *BinaryExpr_create(int line, Expr *operand1, bin_operator_t op, Expr *opera
 	return new;
 }
 
-Expr *UnaryExpr_create(int line, un_operator_t op, Expr *operand)
+Expr *UnaryExpr_create(int line, operator_t op, Expr *operand)
 {
 	Expr *new = calloc(1, sizeof(Expr));
 	
@@ -163,7 +163,7 @@ Expr *UnaryExpr_create(int line, un_operator_t op, Expr *operand)
 	return new;
 }
 
-Expr *PreOpExpr_create(int line, un_operator_t op, Expr *operand)
+Expr *PreOpExpr_create(int line, operator_t op, Expr *operand)
 {
 	Expr *new = calloc(1, sizeof(Expr));
 	
@@ -175,7 +175,7 @@ Expr *PreOpExpr_create(int line, un_operator_t op, Expr *operand)
 	return new;
 }
 
-Expr *PostOpExpr_create(int line, Expr *operand, un_operator_t op)
+Expr *PostOpExpr_create(int line, Expr *operand, operator_t op)
 {
 	Expr *new = calloc(1, sizeof(Expr));
 	

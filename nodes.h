@@ -6,9 +6,8 @@
 #pragma once
 
 typedef enum {OP_ADD, OP_SUB, OP_MULT, OP_DIV, OP_MOD, OP_GT, OP_LT, OP_GE, OP_LE,
-		OP_DIFF, OP_EQUAL, OP_OR, OP_AND} bin_operator_t;
-		
-typedef enum {OP_NOT, OP_MINUS, OP_PLUS, OP_INC, OP_DEC} un_operator_t;
+		OP_DIFF, OP_EQUAL, OP_OR, OP_AND, OP_NOT, OP_MINUS, OP_PLUS, OP_INC, OP_DEC,
+		OP_PARAM, OP_ASSIGN} operator_t;
 
 typedef enum {TYPE_INT, TYPE_FLOAT, TYPE_CHAR, TYPE_VOID} types_t;
 
@@ -48,11 +47,11 @@ Stmt *CompoundStmt_create(int line, List *stmt_list);
 TypeDecl *Typedef_create(int line, TypeName *type, char *name);
 TypeDecl *Struct_create(int line, List *var_decl, char *name);
 
-Expr *BinaryExpr_create(int line, Expr *operand1, bin_operator_t op, Expr *operand2);
-Expr *UnaryExpr_create(int line, un_operator_t op, Expr *operand);
+Expr *BinaryExpr_create(int line, Expr *operand1, operator_t op, Expr *operand2);
+Expr *UnaryExpr_create(int line, operator_t op, Expr *operand);
 
-Expr *PreOpExpr_create(int line, un_operator_t op, Expr *operand);
-Expr *PostOpExpr_create(int line, Expr *operand, un_operator_t op);
+Expr *PreOpExpr_create(int line, operator_t op, Expr *operand);
+Expr *PostOpExpr_create(int line, Expr *operand, operator_t op);
 
 Expr *CallExpr_create(int line, char *id, List *param_list);
 Expr *AssignExpr_create(int line, Var *var, Expr *expr);

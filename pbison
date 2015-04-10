@@ -444,7 +444,7 @@ int main(int argc, char *argv[])
 		printf("Syntax analysis complete. No errors found\n");
 		
 		setPrinter("tree.xml");
-		printf("Setted\n");
+		printf("Setted");
 		printProgram(root);
 		closePrinter();
 		

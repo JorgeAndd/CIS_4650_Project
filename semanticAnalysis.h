@@ -6,10 +6,20 @@
 typedef enum { TYPE_ERR, UNDECLARED_ERR, F_UNDECLARED_ERR, ARGUMENT_TYPE_ERR,
 				 ARGUMENT_NUMBER_ERR } error_t;
 
+typedef enum { I_ADD, I_SUB, I_PARAM } i_operator;
+
 typedef struct
 {
 	types_t type;
+	char* name;
 }NodeValue;
+
+typedef struct Quadruples
+{
+	i_operator op;
+	char *arg1, *arg2, *result;
+	struct Quadruples *next;
+}Quadruples;
 
 void processProgram(Program *node);
 void processList(List *node);

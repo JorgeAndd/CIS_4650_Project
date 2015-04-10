@@ -76,10 +76,10 @@ struct Expr_t
 			} kind;
 	union
 	{
-		struct { Expr *operand1; bin_operator_t op; Expr *operand2; } bexpr;
-		struct { un_operator_t op; Expr *operand; } uexpr;
-		struct { un_operator_t op; Expr *operand; } preopexpr;
-		struct { Expr *operand; un_operator_t op; } postopexpr;
+		struct { Expr *operand1; operator_t op; Expr *operand2; } bexpr;
+		struct { operator_t op; Expr *operand; } uexpr;
+		struct { operator_t op; Expr *operand; } preopexpr;
+		struct { Expr *operand; operator_t op; } postopexpr;
 		
 		struct { char *id; List *param_list; } callexpr;
 		struct { Var *var; Expr *expr; } assignexpr;

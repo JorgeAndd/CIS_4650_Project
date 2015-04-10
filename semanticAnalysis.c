@@ -1,5 +1,76 @@
 #include "semanticAnalysis.h"
 
+Quadruples *instructions = NULL;
+
+int numDigits(int n)
+{
+	int neg = 0;
+	if(n < 0)
+		neg = 1;
+	
+    if (n < 0) n = -n;
+    if (n < 10) return 1 + neg;
+    if (n < 100) return 2 + neg;
+    if (n < 1000) return 3 + neg;
+    if (n < 10000) return 4 + neg;
+    if (n < 100000) return 5 + neg;
+    if (n < 1000000) return 6 + neg;
+    if (n < 10000000) return 7 + neg;
+    if (n < 100000000) return 8 + neg;
+    if (n < 1000000000) return 9 + neg;
+    return 10 + neg;	
+}
+
+char* getNewTemp()
+{
+	static int tempCount = 0;
+	char *tempName = malloc(sizeof(char) * 8);
+		
+	sprintf(tempName, "0tmp%d", tempCount++);
+	
+	return tempName;
+}
+
+void addInstruction(int op, char *arg1, char *arg2, char *result)
+{
+	Quadruples *newInstruction = malloc(sizeof(Quadruples));
+	
+	newInstruction->op = op;
+	newInstruction->arg1 = arg1;
+	newInstruction->arg2 = arg2;
+	
+	if(op == OP_PARAM)
+		newInstruction->result = "";
+	else
+		newInstruction->result = result;
+	
+	newInstruction->next = NULL;
+	
+	Quadruples *instruction = instructions;
+	
+	if(instruction == NULL)
+		instructions = newInstruction;
+	else
+	{
+		while(instruction->next != NULL)
+			instruction = instruction->next;
+		
+		instruction->next = newInstruction;
+	}
+
+}
+
+void printInstructions()
+{
+	printf("OP\tARG1\t\tARG2\t\tRESULT\n");
+	Quadruples *inst = instructions;
+	while(inst != NULL)
+	{
+		printf("%d\t%s\t\t%s\t\t%s\n", inst->op, inst->arg1, inst->arg2, inst->result);
+		inst = inst->next;
+	}
+}
+
 void init()
 {
 	FuncSymbol *newSymbol = createFuncSymbol("putc", TYPE_CHAR);
@@ -29,6 +100,8 @@ void processProgram(Program *node)
     	
    	if(node->function_def != NULL)
    		processList(node->function_def);
+   		
+   	printInstructions();
 	
 }
 
@@ -191,6 +264,7 @@ NodeValue processExpr(Expr *node)
 	NodeValue left;
 	NodeValue right;
 	NodeValue returnValue;
+	int n;
 
 	if(node == NULL)
 		return;
@@ -201,6 +275,7 @@ NodeValue processExpr(Expr *node)
 		left = processExpr(node->u.bexpr.operand1);
 		right = processExpr(node->u.bexpr.operand2);
 		
+		
 		if(left.type == -1 || right.type == -1)
 		{
 			returnValue.type = -1;
@@ -208,7 +283,13 @@ NodeValue processExpr(Expr *node)
 		}	
 		
 		if(left.type == right.type)
-			return left;
+		{
+			returnValue.type = left.type;
+			returnValue.name = getNewTemp();
+			addInstruction(node->u.bexpr.op, left.name, right.name, returnValue.name);
+			
+			return returnValue;
+		}
 		else
 		{
 			reportError(TYPE_ERR, node->line);			
@@ -270,7 +351,12 @@ NodeValue processExpr(Expr *node)
 		}			
 		
 		if(left.type == right.type)
-			return left;
+		{
+			returnValue = left;
+			addInstruction(OP_ASSIGN, right.name, "", returnValue.name);
+			
+			return returnValue;
+		}
 		else
 			reportError(TYPE_ERR, node->line);	
 		
@@ -298,20 +384,17 @@ NodeValue processExpr(Expr *node)
 
 		break;		
 	case VAREXPR:
-		left = processVar(node->u.varexpr.var);
+		returnValue = processVar(node->u.varexpr.var);
 		
-		if(left.type == -1)
-		{
-			returnValue.type = -1;
-			return returnValue;
-		}
-		
-		returnValue.type = left.type;
 		return returnValue;
 		
 		break;
 	case INTEXPR:
 		returnValue.type = TYPE_INT;
+		n = numDigits(node->u.intexpr.value);
+		printf("n digits = %d\n", n);
+		
+		//returnValue.name = malloc(sizeof(char)*
 		return returnValue;
 			
 	case FLOATEXPR:
@@ -423,6 +506,7 @@ NodeValue processVar(Var *node)
 		
 		if(result == 0)
 		{
+			returnValue.name = symbol->name;
 			returnValue.type = symbol->type;
 			return returnValue;
 		}else
