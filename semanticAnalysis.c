@@ -2,18 +2,17 @@
 
 void init()
 {
-	Symbol *newSymbol = createFuncSymbol("putc", TYPE_CHAR, 0);
+	FuncSymbol *newSymbol = createFuncSymbol("putc", TYPE_CHAR);
 	addParam(&newSymbol, TYPE_CHAR);
-	putSymbol(newSymbol);
+	putFuncSymbol(newSymbol);
 	
-	newSymbol = createFuncSymbol("puti", TYPE_INT, 0);
+	newSymbol = createFuncSymbol("puti", TYPE_INT);
 	addParam(&newSymbol, TYPE_INT);
-	putSymbol(newSymbol);
+	putFuncSymbol(newSymbol);
 	
-	newSymbol = createFuncSymbol("putf", TYPE_FLOAT, 0);
+	newSymbol = createFuncSymbol("putf", TYPE_FLOAT);
 	addParam(&newSymbol, TYPE_FLOAT);
-	putSymbol(newSymbol);
-	
+	putFuncSymbol(newSymbol);
 }
 
 void processProgram(Program *node)
@@ -26,6 +25,7 @@ void processProgram(Program *node)
      
     if(node->var_decl != NULL)	
     	processList(node->var_decl);
+	enterScope();
     	
    	if(node->function_def != NULL)
    		processList(node->function_def);
@@ -133,7 +133,7 @@ void processIdName(IdName *node, char **name, int *size)
 	{
 	case SIMPLE_ID:
 		*name = node->u.simple.name;
-		*size = 1;
+		*size = 4;
 		break;
 	case SUBSCRIPT_ID:
 		*name = node->u.subscript.name;
@@ -143,32 +143,40 @@ void processIdName(IdName *node, char **name, int *size)
 }
 
 void processFunction(Function *node)
-{
+{	
 	types_t type = node->type->u.primitive.type;
 	char *name = node->name;
-	int size = 4;
 	
-	Symbol *newSymbol = createFuncSymbol(name, type, size);
+	FuncSymbol *funcSymbol = createFuncSymbol(name, type);
 	
 	List *param = node->param_list;
 	while(param != NULL)
 	{
+		Symbol *newSymbol;
+		char *name;
+		int size;
+		
 		TypeName *typeName = (param->u.param_list.param)->type;
 		type = typeName->u.primitive.type;
 		
-		addParam(&newSymbol, type);
+		addParam(&funcSymbol, type);
+
+		processIdName(param->u.param_list.param->id, &name, &size);
+		newSymbol = createVarSymbol(name, type, size);
+		putSymbol(newSymbol);
 	
 		param = param->next;
 	}
 
-	putSymbol(newSymbol);
-
+	putFuncSymbol(funcSymbol);
 	processFuncBody(node->body);
+	leaveScope();
 }
 
 void processFuncBody(FunctionBody *node)
 {
 	processList(node->varDecl_list);
+	enterScope();
 	processList(node->stmt_list);
 }
 
@@ -320,11 +328,11 @@ NodeValue processExpr(Expr *node)
 
 NodeValue processCall(Expr *call)
 {
-	Symbol *symbol;
+	FuncSymbol *symbol;
 	int result;
 	NodeValue returnValue;
 
-	result = getSymbol(call->u.callexpr.id, &symbol);
+	result = getFuncSymbol(call->u.callexpr.id, &symbol);
 		
 	if(result == 0)
 	{
@@ -337,7 +345,7 @@ NodeValue processCall(Expr *call)
 	}
 	
 	List *params1 = call->u.callexpr.param_list;
-	SParam *params2 = symbol->params;
+	SParam *params2 = symbol->param;
 	
 	while(params1 != NULL && params2 != NULL)
 	{	

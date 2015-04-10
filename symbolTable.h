@@ -13,21 +13,25 @@ typedef struct SParam
 }SParam;
 
 typedef struct
-{
-	enum { VAR, FUNC } kind;
-	
+{	
 	char *name;
 	types_t type;
 	
-	//int loc;
+	int loc;
 	int size;
 	
 	SParam *params; 
 }Symbol;
 
-Symbol* createVarSymbol(char *name, types_t type, int size);
-Symbol* createFuncSymbol(char *name, types_t type, int size);
-void addParam(Symbol **symbol, types_t type);
+typedef struct 
+{
+	char *name;
+	types_t type;
+	
+	int loc;
+	SParam *param;
+}FuncSymbol;
+
 
 typedef struct Stack_node
 {
@@ -42,6 +46,20 @@ typedef struct List_node
 	struct List_node *next;
 }List_node;
 
+typedef struct FuncList_node
+{
+	FuncSymbol *symbol;
+	struct FuncList_node *next;
+}FuncList_node;	
+
+unsigned int hash(char *s0);
+
 void append(List_node **List_node, Symbol *symbol);
 void push(Stack_node **Stack_node, Symbol *newSymbol);
-unsigned int hash(char *s0);
+void putSymbol(Symbol *symbol);
+void putFuncSymbol(FuncSymbol *symbol);
+int getSymbol(char *name, Symbol **symbol);
+Symbol* createVarSymbol(char *name, types_t type, int size);
+FuncSymbol* createFuncSymbol(char *name, types_t type);
+void addParam(FuncSymbol **symbol, types_t type);
+void printBinding();

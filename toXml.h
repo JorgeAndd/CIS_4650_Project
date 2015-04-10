@@ -2,6 +2,8 @@
 #include "nodeStructs.h"
 #include <stdio.h>
 
+void setPrinter(char *filename);
+void closePrinter();
 void ident(int depthChange);
 void printProgram(Program *node);
 void closePrinter();

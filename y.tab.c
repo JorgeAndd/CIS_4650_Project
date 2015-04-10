@@ -71,16 +71,17 @@
 	
 	#include "nodes.h"
 	#include "nodeStructs.h"	
+	#include "toXml.h"
 	
 	extern int yylineno;
 	extern char *yytext;
 	extern char linebuf[150];
 	extern int tokenpos;
+	extern FILE * yyin;
 	
 	Program *root;
-	
 
-#line 84 "y.tab.c" /* yacc.c:339  */
+#line 85 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -182,7 +183,7 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 21 "pbison" /* yacc.c:355  */
+#line 22 "pbison" /* yacc.c:355  */
 
 	int ival;
 	float fval;
@@ -203,7 +204,7 @@ union YYSTYPE
 	Param *paramval;
 	
 
-#line 207 "y.tab.c" /* yacc.c:355  */
+#line 208 "y.tab.c" /* yacc.c:355  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
@@ -232,7 +233,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 236 "y.tab.c" /* yacc.c:358  */
+#line 237 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -534,16 +535,16 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    90,    90,    92,    94,    96,   101,   103,   105,   107,
-     111,   114,   117,   119,   123,   126,   131,   135,   138,   141,
-     143,   147,   152,   154,   158,   161,   165,   167,   171,   174,
-     180,   183,   186,   188,   192,   199,   201,   203,   206,   210,
-     212,   217,   220,   222,   224,   226,   230,   232,   236,   240,
-     247,   251,   256,   259,   262,   265,   269,   273,   276,   279,
-     281,   285,   288,   291,   294,   297,   300,   303,   306,   309,
-     312,   315,   318,   321,   324,   327,   330,   333,   335,   337,
-     340,   343,   346,   349,   352,   355,   358,   362,   364,   366,
-     370,   372,   374
+       0,    91,    91,    93,    95,    97,   102,   104,   106,   108,
+     112,   115,   118,   120,   124,   127,   132,   136,   139,   142,
+     144,   148,   153,   155,   159,   162,   166,   168,   172,   175,
+     181,   184,   187,   189,   193,   200,   202,   204,   207,   211,
+     213,   218,   221,   223,   225,   227,   231,   233,   237,   241,
+     248,   252,   257,   260,   263,   266,   270,   274,   277,   280,
+     282,   286,   289,   292,   295,   298,   301,   304,   307,   310,
+     313,   316,   319,   322,   325,   328,   331,   334,   336,   338,
+     341,   344,   347,   350,   353,   356,   359,   363,   365,   367,
+     371,   373,   375
 };
 #endif
 
@@ -1592,597 +1593,597 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 91 "pbison" /* yacc.c:1646  */
+#line 92 "pbison" /* yacc.c:1646  */
     { (yyval.programval) = Program_create((yyvsp[0].listval), NULL, NULL); root = (yyval.programval); }
-#line 1598 "y.tab.c" /* yacc.c:1646  */
+#line 1599 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 93 "pbison" /* yacc.c:1646  */
+#line 94 "pbison" /* yacc.c:1646  */
     { (yyval.programval) = Program_create((yyvsp[-2].listval), (yyvsp[-1].listval), (yyvsp[0].listval)); root = (yyval.programval); }
-#line 1604 "y.tab.c" /* yacc.c:1646  */
+#line 1605 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 95 "pbison" /* yacc.c:1646  */
+#line 96 "pbison" /* yacc.c:1646  */
     { (yyval.programval) = Program_create((yyvsp[-1].listval), (yyvsp[0].listval), NULL); root = (yyval.programval); }
-#line 1610 "y.tab.c" /* yacc.c:1646  */
+#line 1611 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 97 "pbison" /* yacc.c:1646  */
+#line 98 "pbison" /* yacc.c:1646  */
     { (yyval.programval) = Program_create((yyvsp[-1].listval), NULL, (yyvsp[0].listval)); root = (yyval.programval); }
-#line 1616 "y.tab.c" /* yacc.c:1646  */
+#line 1617 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 102 "pbison" /* yacc.c:1646  */
+#line 103 "pbison" /* yacc.c:1646  */
     { (yyval.typeval) = PrimitiveTypeName_create(yylineno, TYPE_INT); }
-#line 1622 "y.tab.c" /* yacc.c:1646  */
+#line 1623 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 104 "pbison" /* yacc.c:1646  */
+#line 105 "pbison" /* yacc.c:1646  */
     { (yyval.typeval) = PrimitiveTypeName_create(yylineno, TYPE_FLOAT); }
-#line 1628 "y.tab.c" /* yacc.c:1646  */
+#line 1629 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 106 "pbison" /* yacc.c:1646  */
+#line 107 "pbison" /* yacc.c:1646  */
     { (yyval.typeval) = PrimitiveTypeName_create(yylineno, TYPE_FLOAT); }
-#line 1634 "y.tab.c" /* yacc.c:1646  */
+#line 1635 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 108 "pbison" /* yacc.c:1646  */
+#line 109 "pbison" /* yacc.c:1646  */
     { (yyval.typeval) = UserTypeName_create(yylineno, (yyvsp[0].sval)); }
-#line 1640 "y.tab.c" /* yacc.c:1646  */
+#line 1641 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 112 "pbison" /* yacc.c:1646  */
+#line 113 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = (yyvsp[0].listval); }
-#line 1646 "y.tab.c" /* yacc.c:1646  */
+#line 1647 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 114 "pbison" /* yacc.c:1646  */
+#line 115 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = NULL; }
-#line 1652 "y.tab.c" /* yacc.c:1646  */
+#line 1653 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 118 "pbison" /* yacc.c:1646  */
+#line 119 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = (yyvsp[-1].listval); }
-#line 1658 "y.tab.c" /* yacc.c:1646  */
+#line 1659 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 120 "pbison" /* yacc.c:1646  */
+#line 121 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = Append((yyvsp[-2].listval), (yyvsp[-1].listval)); }
-#line 1664 "y.tab.c" /* yacc.c:1646  */
+#line 1665 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 124 "pbison" /* yacc.c:1646  */
+#line 125 "pbison" /* yacc.c:1646  */
     { TypeDecl *aux = Typedef_create(yylineno, (yyvsp[-1].typeval), (yyvsp[0].sval));
 				  (yyval.listval) = TypeDeclList_create(yylineno, aux, NULL); }
-#line 1671 "y.tab.c" /* yacc.c:1646  */
+#line 1672 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 127 "pbison" /* yacc.c:1646  */
+#line 128 "pbison" /* yacc.c:1646  */
     { TypeDecl *aux = (yyvsp[0].typedeclval); 
 				  (yyval.listval) = TypeDeclList_create(yylineno, aux, NULL); }
-#line 1678 "y.tab.c" /* yacc.c:1646  */
+#line 1679 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 132 "pbison" /* yacc.c:1646  */
+#line 133 "pbison" /* yacc.c:1646  */
     { (yyval.typedeclval) = Struct_create(yylineno, (yyvsp[-2].listval), (yyvsp[0].sval)); }
-#line 1684 "y.tab.c" /* yacc.c:1646  */
+#line 1685 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 136 "pbison" /* yacc.c:1646  */
+#line 137 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = (yyvsp[0].listval); }
-#line 1690 "y.tab.c" /* yacc.c:1646  */
+#line 1691 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 138 "pbison" /* yacc.c:1646  */
+#line 139 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = NULL; }
-#line 1696 "y.tab.c" /* yacc.c:1646  */
+#line 1697 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 142 "pbison" /* yacc.c:1646  */
+#line 143 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = (yyvsp[-1].listval); }
-#line 1702 "y.tab.c" /* yacc.c:1646  */
+#line 1703 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 144 "pbison" /* yacc.c:1646  */
+#line 145 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = Append((yyvsp[-2].listval), (yyvsp[-1].listval)); }
-#line 1708 "y.tab.c" /* yacc.c:1646  */
+#line 1709 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 148 "pbison" /* yacc.c:1646  */
+#line 149 "pbison" /* yacc.c:1646  */
     { VarDecl *aux = VarDecl_create(yylineno, (yyvsp[-1].typeval), (yyvsp[0].listval));
 				  (yyval.listval) = VarDeclList_create(yylineno, aux, NULL); }
-#line 1715 "y.tab.c" /* yacc.c:1646  */
+#line 1716 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 153 "pbison" /* yacc.c:1646  */
+#line 154 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = (yyvsp[0].listval); }
-#line 1721 "y.tab.c" /* yacc.c:1646  */
+#line 1722 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 155 "pbison" /* yacc.c:1646  */
+#line 156 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = Append((yyvsp[-2].listval), (yyvsp[0].listval)); }
-#line 1727 "y.tab.c" /* yacc.c:1646  */
+#line 1728 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 159 "pbison" /* yacc.c:1646  */
+#line 160 "pbison" /* yacc.c:1646  */
     { IdName *aux = SimpleIdName_create(yylineno, (yyvsp[0].sval));
   			  (yyval.listval) = IdList_create(yylineno, aux, NULL); }
-#line 1734 "y.tab.c" /* yacc.c:1646  */
+#line 1735 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 162 "pbison" /* yacc.c:1646  */
+#line 163 "pbison" /* yacc.c:1646  */
     { IdName *aux = SubscriptIdName_create(yylineno, (yyvsp[-3].sval), (yyvsp[-1].ival)); 
 			  (yyval.listval) = IdList_create(yylineno, aux, NULL); }
-#line 1741 "y.tab.c" /* yacc.c:1646  */
+#line 1742 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 166 "pbison" /* yacc.c:1646  */
+#line 167 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = (yyvsp[0].listval); }
-#line 1747 "y.tab.c" /* yacc.c:1646  */
+#line 1748 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 168 "pbison" /* yacc.c:1646  */
+#line 169 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = Append((yyvsp[-1].listval), (yyvsp[0].listval)); }
-#line 1753 "y.tab.c" /* yacc.c:1646  */
+#line 1754 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 172 "pbison" /* yacc.c:1646  */
+#line 173 "pbison" /* yacc.c:1646  */
     { Function *aux = Function_create(yylineno, (yyvsp[-7].typeval), (yyvsp[-6].sval), (yyvsp[-4].listval), (yyvsp[-1].funcbodyval));
 					  (yyval.listval) = FunctionList_create(yylineno, aux, NULL);  }
-#line 1760 "y.tab.c" /* yacc.c:1646  */
+#line 1761 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 175 "pbison" /* yacc.c:1646  */
+#line 176 "pbison" /* yacc.c:1646  */
     { TypeName *new = PrimitiveTypeName_create(yylineno, TYPE_VOID);
 		   			  Function *aux = Function_create(yylineno, new, (yyvsp[-6].sval), (yyvsp[-4].listval), (yyvsp[-1].funcbodyval)); 
 					  (yyval.listval) = FunctionList_create(yylineno, aux, NULL);  }
-#line 1768 "y.tab.c" /* yacc.c:1646  */
+#line 1769 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 181 "pbison" /* yacc.c:1646  */
+#line 182 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = (yyvsp[0].listval); }
-#line 1774 "y.tab.c" /* yacc.c:1646  */
+#line 1775 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 183 "pbison" /* yacc.c:1646  */
+#line 184 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = NULL; }
-#line 1780 "y.tab.c" /* yacc.c:1646  */
+#line 1781 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 187 "pbison" /* yacc.c:1646  */
+#line 188 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = (yyvsp[0].listval); }
-#line 1786 "y.tab.c" /* yacc.c:1646  */
+#line 1787 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 189 "pbison" /* yacc.c:1646  */
+#line 190 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = Append((yyvsp[-2].listval), (yyvsp[0].listval)); }
-#line 1792 "y.tab.c" /* yacc.c:1646  */
+#line 1793 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 193 "pbison" /* yacc.c:1646  */
+#line 194 "pbison" /* yacc.c:1646  */
     { List *aux = (yyvsp[0].listval);
 				  IdName *aux2 = aux->u.id_list.id; 
    				  Param *aux3 = Param_create(yylineno, (yyvsp[-1].typeval), aux2);
    				  (yyval.listval) =  ParamList_create(yylineno, aux3, NULL); }
-#line 1801 "y.tab.c" /* yacc.c:1646  */
+#line 1802 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 200 "pbison" /* yacc.c:1646  */
+#line 201 "pbison" /* yacc.c:1646  */
     { (yyval.funcbodyval) = FunctionBody_create(yylineno, (yyvsp[-1].listval), (yyvsp[0].listval)); }
-#line 1807 "y.tab.c" /* yacc.c:1646  */
+#line 1808 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 202 "pbison" /* yacc.c:1646  */
+#line 203 "pbison" /* yacc.c:1646  */
     { (yyval.funcbodyval) = FunctionBody_create(yylineno, (yyvsp[0].listval), NULL); }
-#line 1813 "y.tab.c" /* yacc.c:1646  */
+#line 1814 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 204 "pbison" /* yacc.c:1646  */
+#line 205 "pbison" /* yacc.c:1646  */
     { (yyval.funcbodyval) = FunctionBody_create(yylineno, NULL, (yyvsp[0].listval)); }
-#line 1819 "y.tab.c" /* yacc.c:1646  */
+#line 1820 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 206 "pbison" /* yacc.c:1646  */
+#line 207 "pbison" /* yacc.c:1646  */
     { (yyval.funcbodyval) = FunctionBody_create(yylineno, NULL, NULL); }
-#line 1825 "y.tab.c" /* yacc.c:1646  */
+#line 1826 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 211 "pbison" /* yacc.c:1646  */
+#line 212 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = (yyvsp[0].listval); }
-#line 1831 "y.tab.c" /* yacc.c:1646  */
+#line 1832 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 213 "pbison" /* yacc.c:1646  */
+#line 214 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = Append((yyvsp[-1].listval), (yyvsp[0].listval)); }
-#line 1837 "y.tab.c" /* yacc.c:1646  */
+#line 1838 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 218 "pbison" /* yacc.c:1646  */
+#line 219 "pbison" /* yacc.c:1646  */
     { Stmt *aux = ExpressionStmt_create(yylineno, (yyvsp[-1].listval)->u.expr_list.expr); 
 			  (yyval.listval) = StmtList_create(yylineno, aux, NULL); }
-#line 1844 "y.tab.c" /* yacc.c:1646  */
+#line 1845 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 221 "pbison" /* yacc.c:1646  */
+#line 222 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = StmtList_create(yylineno, (yyvsp[0].stmtval), NULL); }
-#line 1850 "y.tab.c" /* yacc.c:1646  */
+#line 1851 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 223 "pbison" /* yacc.c:1646  */
+#line 224 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = StmtList_create(yylineno, (yyvsp[0].stmtval), NULL); }
-#line 1856 "y.tab.c" /* yacc.c:1646  */
+#line 1857 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 225 "pbison" /* yacc.c:1646  */
+#line 226 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = StmtList_create(yylineno, (yyvsp[0].stmtval), NULL); }
-#line 1862 "y.tab.c" /* yacc.c:1646  */
+#line 1863 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 227 "pbison" /* yacc.c:1646  */
+#line 228 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = StmtList_create(yylineno, (yyvsp[0].stmtval), NULL); }
-#line 1868 "y.tab.c" /* yacc.c:1646  */
+#line 1869 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 231 "pbison" /* yacc.c:1646  */
+#line 232 "pbison" /* yacc.c:1646  */
     { (yyval.stmtval) = CompoundStmt_create(yylineno, (yyvsp[-1].listval)); }
-#line 1874 "y.tab.c" /* yacc.c:1646  */
+#line 1875 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 233 "pbison" /* yacc.c:1646  */
+#line 234 "pbison" /* yacc.c:1646  */
     { (yyval.stmtval) = NULL; }
-#line 1880 "y.tab.c" /* yacc.c:1646  */
+#line 1881 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 237 "pbison" /* yacc.c:1646  */
+#line 238 "pbison" /* yacc.c:1646  */
     { Expr *aux = (yyvsp[-2].listval)->u.expr_list.expr;  
 				  Stmt *aux2 = (yyvsp[0].listval)->u.stmt_list.stmt; 
 				  (yyval.stmtval) = IfStmt_create(yylineno, aux, aux2, NULL); }
-#line 1888 "y.tab.c" /* yacc.c:1646  */
+#line 1889 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 241 "pbison" /* yacc.c:1646  */
+#line 242 "pbison" /* yacc.c:1646  */
     { Expr *aux = (yyvsp[-4].listval)->u.expr_list.expr;  
 				  Stmt *aux2 = (yyvsp[-2].listval)->u.stmt_list.stmt;
 				  Stmt *aux3 = (yyvsp[0].listval)->u.stmt_list.stmt;
 				  (yyval.stmtval) = IfStmt_create(yylineno, aux, aux2, aux3); }
-#line 1897 "y.tab.c" /* yacc.c:1646  */
+#line 1898 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 248 "pbison" /* yacc.c:1646  */
+#line 249 "pbison" /* yacc.c:1646  */
     { Expr *aux = (yyvsp[-2].listval)->u.expr_list.expr;  
 				  Stmt *aux2 = (yyvsp[0].listval)->u.stmt_list.stmt; 
    				  (yyval.stmtval) = IterativeStmt_create(yylineno, NULL, aux, NULL, aux2); }
-#line 1905 "y.tab.c" /* yacc.c:1646  */
+#line 1906 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 252 "pbison" /* yacc.c:1646  */
+#line 253 "pbison" /* yacc.c:1646  */
     { Stmt *aux = (yyvsp[0].listval)->u.stmt_list.stmt;
 				  (yyval.stmtval) = IterativeStmt_create(yylineno, (yyvsp[-6].exprval), (yyvsp[-4].exprval), (yyvsp[-2].exprval), aux); }
-#line 1912 "y.tab.c" /* yacc.c:1646  */
+#line 1913 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 257 "pbison" /* yacc.c:1646  */
+#line 258 "pbison" /* yacc.c:1646  */
     { (yyval.exprval) = (yyvsp[0].listval)->u.expr_list.expr; }
-#line 1918 "y.tab.c" /* yacc.c:1646  */
+#line 1919 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 259 "pbison" /* yacc.c:1646  */
+#line 260 "pbison" /* yacc.c:1646  */
     { (yyval.exprval) = NULL; }
-#line 1924 "y.tab.c" /* yacc.c:1646  */
+#line 1925 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 263 "pbison" /* yacc.c:1646  */
+#line 264 "pbison" /* yacc.c:1646  */
     { Expr *aux = (yyvsp[-1].listval)->u.expr_list.expr;   
    				  (yyval.stmtval) = ReturnStmt_create(yylineno, aux); }
-#line 1931 "y.tab.c" /* yacc.c:1646  */
+#line 1932 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 266 "pbison" /* yacc.c:1646  */
+#line 267 "pbison" /* yacc.c:1646  */
     { (yyval.stmtval) = ReturnStmt_create(yylineno, NULL); }
-#line 1937 "y.tab.c" /* yacc.c:1646  */
+#line 1938 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 270 "pbison" /* yacc.c:1646  */
+#line 271 "pbison" /* yacc.c:1646  */
     { (yyval.exprval) = CallExpr_create(yylineno, (yyvsp[-3].sval), (yyvsp[-1].listval)); }
-#line 1943 "y.tab.c" /* yacc.c:1646  */
+#line 1944 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 274 "pbison" /* yacc.c:1646  */
+#line 275 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = (yyvsp[0].listval); }
-#line 1949 "y.tab.c" /* yacc.c:1646  */
+#line 1950 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 276 "pbison" /* yacc.c:1646  */
+#line 277 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = NULL; }
-#line 1955 "y.tab.c" /* yacc.c:1646  */
+#line 1956 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 280 "pbison" /* yacc.c:1646  */
+#line 281 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = (yyvsp[0].listval); }
-#line 1961 "y.tab.c" /* yacc.c:1646  */
+#line 1962 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 282 "pbison" /* yacc.c:1646  */
+#line 283 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = Append((yyvsp[-2].listval), (yyvsp[0].listval)); }
-#line 1967 "y.tab.c" /* yacc.c:1646  */
+#line 1968 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 286 "pbison" /* yacc.c:1646  */
+#line 287 "pbison" /* yacc.c:1646  */
     { Expr *aux = BinaryExpr_create(yylineno, (yyvsp[-2].listval)->u.expr_list.expr, OP_ADD, (yyvsp[0].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 1974 "y.tab.c" /* yacc.c:1646  */
+#line 1975 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 289 "pbison" /* yacc.c:1646  */
+#line 290 "pbison" /* yacc.c:1646  */
     { Expr *aux = BinaryExpr_create(yylineno, (yyvsp[-2].listval)->u.expr_list.expr, OP_SUB, (yyvsp[0].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 1981 "y.tab.c" /* yacc.c:1646  */
+#line 1982 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 292 "pbison" /* yacc.c:1646  */
+#line 293 "pbison" /* yacc.c:1646  */
     { Expr *aux = BinaryExpr_create(yylineno, (yyvsp[-2].listval)->u.expr_list.expr, OP_MULT, (yyvsp[0].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 1988 "y.tab.c" /* yacc.c:1646  */
+#line 1989 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 295 "pbison" /* yacc.c:1646  */
+#line 296 "pbison" /* yacc.c:1646  */
     { Expr *aux = BinaryExpr_create(yylineno, (yyvsp[-2].listval)->u.expr_list.expr, OP_DIV, (yyvsp[0].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 1995 "y.tab.c" /* yacc.c:1646  */
+#line 1996 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 298 "pbison" /* yacc.c:1646  */
+#line 299 "pbison" /* yacc.c:1646  */
     { Expr *aux = BinaryExpr_create(yylineno, (yyvsp[-2].listval)->u.expr_list.expr, OP_MOD, (yyvsp[0].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 2002 "y.tab.c" /* yacc.c:1646  */
+#line 2003 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 301 "pbison" /* yacc.c:1646  */
+#line 302 "pbison" /* yacc.c:1646  */
     { Expr *aux = BinaryExpr_create(yylineno, (yyvsp[-2].listval)->u.expr_list.expr, OP_GT, (yyvsp[0].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 2009 "y.tab.c" /* yacc.c:1646  */
+#line 2010 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 304 "pbison" /* yacc.c:1646  */
+#line 305 "pbison" /* yacc.c:1646  */
     { Expr *aux = BinaryExpr_create(yylineno, (yyvsp[-2].listval)->u.expr_list.expr, OP_LT, (yyvsp[0].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 2016 "y.tab.c" /* yacc.c:1646  */
+#line 2017 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 307 "pbison" /* yacc.c:1646  */
+#line 308 "pbison" /* yacc.c:1646  */
     { Expr *aux = BinaryExpr_create(yylineno, (yyvsp[-2].listval)->u.expr_list.expr, OP_GE, (yyvsp[0].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 2023 "y.tab.c" /* yacc.c:1646  */
+#line 2024 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 310 "pbison" /* yacc.c:1646  */
+#line 311 "pbison" /* yacc.c:1646  */
     { Expr *aux = BinaryExpr_create(yylineno, (yyvsp[-2].listval)->u.expr_list.expr, OP_LE, (yyvsp[0].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 2030 "y.tab.c" /* yacc.c:1646  */
+#line 2031 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 313 "pbison" /* yacc.c:1646  */
+#line 314 "pbison" /* yacc.c:1646  */
     { Expr *aux = BinaryExpr_create(yylineno, (yyvsp[-2].listval)->u.expr_list.expr, OP_DIFF, (yyvsp[0].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 2037 "y.tab.c" /* yacc.c:1646  */
+#line 2038 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 316 "pbison" /* yacc.c:1646  */
+#line 317 "pbison" /* yacc.c:1646  */
     { Expr *aux = BinaryExpr_create(yylineno, (yyvsp[-2].listval)->u.expr_list.expr, OP_EQUAL, (yyvsp[0].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 2044 "y.tab.c" /* yacc.c:1646  */
+#line 2045 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 319 "pbison" /* yacc.c:1646  */
+#line 320 "pbison" /* yacc.c:1646  */
     { Expr *aux = BinaryExpr_create(yylineno, (yyvsp[-2].listval)->u.expr_list.expr, OP_OR, (yyvsp[0].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 2051 "y.tab.c" /* yacc.c:1646  */
+#line 2052 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 322 "pbison" /* yacc.c:1646  */
+#line 323 "pbison" /* yacc.c:1646  */
     { Expr *aux = BinaryExpr_create(yylineno, (yyvsp[-2].listval)->u.expr_list.expr, OP_AND, (yyvsp[0].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 2058 "y.tab.c" /* yacc.c:1646  */
+#line 2059 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 325 "pbison" /* yacc.c:1646  */
+#line 326 "pbison" /* yacc.c:1646  */
     { Expr *aux = UnaryExpr_create(yylineno, OP_NOT, (yyvsp[0].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 2065 "y.tab.c" /* yacc.c:1646  */
+#line 2066 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 328 "pbison" /* yacc.c:1646  */
+#line 329 "pbison" /* yacc.c:1646  */
     { Expr *aux = UnaryExpr_create(yylineno, OP_MINUS, (yyvsp[0].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 2072 "y.tab.c" /* yacc.c:1646  */
+#line 2073 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 331 "pbison" /* yacc.c:1646  */
+#line 332 "pbison" /* yacc.c:1646  */
     { Expr *aux = UnaryExpr_create(yylineno, OP_PLUS, (yyvsp[0].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 2079 "y.tab.c" /* yacc.c:1646  */
+#line 2080 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 334 "pbison" /* yacc.c:1646  */
+#line 335 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = ExprList_create(yylineno, (yyvsp[-1].listval)->u.expr_list.expr, NULL); }
-#line 2085 "y.tab.c" /* yacc.c:1646  */
+#line 2086 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 78:
-#line 336 "pbison" /* yacc.c:1646  */
+#line 337 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = ExprList_create(yylineno, (yyvsp[0].exprval), NULL); }
-#line 2091 "y.tab.c" /* yacc.c:1646  */
+#line 2092 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 79:
-#line 338 "pbison" /* yacc.c:1646  */
+#line 339 "pbison" /* yacc.c:1646  */
     { Expr *aux = AssignExpr_create(yylineno, (yyvsp[-2].varval), (yyvsp[0].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 2098 "y.tab.c" /* yacc.c:1646  */
+#line 2099 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 80:
-#line 341 "pbison" /* yacc.c:1646  */
+#line 342 "pbison" /* yacc.c:1646  */
     { Expr *aux = VarExpr_create(yylineno, (yyvsp[0].varval)); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 2105 "y.tab.c" /* yacc.c:1646  */
+#line 2106 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 344 "pbison" /* yacc.c:1646  */
+#line 345 "pbison" /* yacc.c:1646  */
     { Expr *aux = PreOpExpr_create(yylineno, OP_INC, (yyvsp[-1].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 2112 "y.tab.c" /* yacc.c:1646  */
+#line 2113 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 82:
-#line 347 "pbison" /* yacc.c:1646  */
+#line 348 "pbison" /* yacc.c:1646  */
     { Expr *aux = PreOpExpr_create(yylineno, OP_DEC, (yyvsp[-1].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 2119 "y.tab.c" /* yacc.c:1646  */
+#line 2120 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 83:
-#line 350 "pbison" /* yacc.c:1646  */
+#line 351 "pbison" /* yacc.c:1646  */
     { Expr *aux = PostOpExpr_create(yylineno, (yyvsp[0].listval)->u.expr_list.expr, OP_INC); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 2126 "y.tab.c" /* yacc.c:1646  */
+#line 2127 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 84:
-#line 353 "pbison" /* yacc.c:1646  */
+#line 354 "pbison" /* yacc.c:1646  */
     { Expr *aux = PostOpExpr_create(yylineno, (yyvsp[0].listval)->u.expr_list.expr, OP_DEC); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 2133 "y.tab.c" /* yacc.c:1646  */
+#line 2134 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 85:
-#line 356 "pbison" /* yacc.c:1646  */
+#line 357 "pbison" /* yacc.c:1646  */
     { Expr *aux = SizeOfExpr_create(yylineno, (yyvsp[-1].listval)->u.expr_list.expr); 
 			  (yyval.listval) = ExprList_create(yylineno, aux, NULL); }
-#line 2140 "y.tab.c" /* yacc.c:1646  */
+#line 2141 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 86:
-#line 359 "pbison" /* yacc.c:1646  */
+#line 360 "pbison" /* yacc.c:1646  */
     { (yyval.listval) = ExprList_create(yylineno, (yyvsp[0].exprval), NULL); }
-#line 2146 "y.tab.c" /* yacc.c:1646  */
+#line 2147 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 87:
-#line 363 "pbison" /* yacc.c:1646  */
+#line 364 "pbison" /* yacc.c:1646  */
     { (yyval.varval) = SimpleVar_create(yylineno, (yyvsp[0].sval)); }
-#line 2152 "y.tab.c" /* yacc.c:1646  */
+#line 2153 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 88:
-#line 365 "pbison" /* yacc.c:1646  */
+#line 366 "pbison" /* yacc.c:1646  */
     { (yyval.varval) = SubscriptVar_create(yylineno, (yyvsp[-3].varval), (yyvsp[-1].listval)->u.expr_list.expr); }
-#line 2158 "y.tab.c" /* yacc.c:1646  */
+#line 2159 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 89:
-#line 367 "pbison" /* yacc.c:1646  */
+#line 368 "pbison" /* yacc.c:1646  */
     { (yyval.varval) = FieldVar_create(yylineno, (yyvsp[-2].varval), (yyvsp[0].varval)); }
-#line 2164 "y.tab.c" /* yacc.c:1646  */
+#line 2165 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 90:
-#line 371 "pbison" /* yacc.c:1646  */
+#line 372 "pbison" /* yacc.c:1646  */
     { (yyval.exprval) = IntExpr_create(yylineno, (yyvsp[0].ival)); }
-#line 2170 "y.tab.c" /* yacc.c:1646  */
+#line 2171 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 91:
-#line 373 "pbison" /* yacc.c:1646  */
+#line 374 "pbison" /* yacc.c:1646  */
     { (yyval.exprval) = FloatExpr_create(yylineno, (yyvsp[0].fval)); }
-#line 2176 "y.tab.c" /* yacc.c:1646  */
+#line 2177 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 92:
-#line 375 "pbison" /* yacc.c:1646  */
+#line 376 "pbison" /* yacc.c:1646  */
     { (yyval.exprval) = CharExpr_create(yylineno, (yyvsp[0].cval)); }
-#line 2182 "y.tab.c" /* yacc.c:1646  */
+#line 2183 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2186 "y.tab.c" /* yacc.c:1646  */
+#line 2187 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2417,7 +2418,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 378 "pbison" /* yacc.c:1906  */
+#line 379 "pbison" /* yacc.c:1906  */
 
 
 extern FILE *yyin;
@@ -2451,22 +2452,47 @@ int yywrap()
         return 1;
 } 
 
-main()
+int main(int argc, char *argv[])
 {
 	int result;
+	
+	if(argc < 3)
+	{
+		printf("Insufficient program arguments\n");
+		return;
+	}
+	
+	yyin = fopen(argv[2], "r");
+	if(yyin == NULL)
+	{
+		printf("Error opening input file\n");
+		return;
+	}
 	
 	result = yyparse();
 	
 	if(result == 0)
 	{
+		char file_name[20];
+		int i = 0;
+		
+		while(argv[2][i] != '.')
+		{
+			file_name[i] = argv[2][i];
+			i++;
+		}
+		file_name[i] = '\0';
+	
 		FILE *tty = fopen("/dev/tty", "r");
 		printf("Syntax analysis complete. No errors found\n");
 		
 		setPrinter("tree.xml");
+		printf("Setted\n");
 		printProgram(root);
 		closePrinter();
 		
 		processProgram(root);
+		return 0;
 	}
 		
 	return 0;

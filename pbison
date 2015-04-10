@@ -8,14 +8,15 @@
 	
 	#include "nodes.h"
 	#include "nodeStructs.h"	
+	#include "toXml.h"
 	
 	extern int yylineno;
 	extern char *yytext;
 	extern char linebuf[150];
 	extern int tokenpos;
+	extern FILE * yyin;
 	
 	Program *root;
-	
 %}
 
 %union{
@@ -408,22 +409,47 @@ int yywrap()
         return 1;
 } 
 
-main()
+int main(int argc, char *argv[])
 {
 	int result;
+	
+	if(argc < 3)
+	{
+		printf("Insufficient program arguments\n");
+		return;
+	}
+	
+	yyin = fopen(argv[2], "r");
+	if(yyin == NULL)
+	{
+		printf("Error opening input file\n");
+		return;
+	}
 	
 	result = yyparse();
 	
 	if(result == 0)
 	{
+		char file_name[20];
+		int i = 0;
+		
+		while(argv[2][i] != '.')
+		{
+			file_name[i] = argv[2][i];
+			i++;
+		}
+		file_name[i] = '\0';
+	
 		FILE *tty = fopen("/dev/tty", "r");
 		printf("Syntax analysis complete. No errors found\n");
 		
 		setPrinter("tree.xml");
+		printf("Setted\n");
 		printProgram(root);
 		closePrinter();
 		
 		processProgram(root);
+		return 0;
 	}
 		
 	return 0;
