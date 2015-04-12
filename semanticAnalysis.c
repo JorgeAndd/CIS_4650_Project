@@ -6,16 +6,31 @@ char* getNewTemp()
 {
 	static int tempCount = 0;
 	char *tempName = malloc(sizeof(char) * 8);
+	Symbol *newSymbol;
 		
 	sprintf(tempName, "0tmp%d", tempCount++);
+	
+	newSymbol = createVarSymbol(tempName, TYPE_INT, 4);
+	putSymbol(newSymbol);
 	
 	return tempName;
 }
 
-void addInstruction(int op, char *arg1, char *arg2, char *result)
+char* getNewLabel()
+{
+	static int labelCount = 0;
+	char *tempName = malloc(sizeof(char) * 5);
+		
+	sprintf(tempName, "L%d", labelCount++);
+	
+	return tempName;
+}
+
+void addInstruction(char *label, int op, char *arg1, char *arg2, char *result)
 {
 	Quadruples *newInstruction = malloc(sizeof(Quadruples));
 	
+	newInstruction->label = label;
 	newInstruction->op = op;
 	newInstruction->arg1 = arg1;
 	newInstruction->arg2 = arg2;
@@ -41,18 +56,18 @@ void addInstruction(int op, char *arg1, char *arg2, char *result)
 
 }
 
-void printInstructions()
+void printInstructions(FILE *output)
 {
-	printf("OP\tARG1\t\tARG2\t\tRESULT\n");
+	fprintf(output, "%-10s OP\t %-16s %-16s %s\n", "LABEL", "ARG1", "ARG2", "RESULT");
 	Quadruples *inst = instructions;
 	while(inst != NULL)
 	{
-		printf("%d\t%s\t\t%s\t\t%s\n", inst->op, inst->arg1, inst->arg2, inst->result);
+		fprintf(output, "%-10s %2d\t %-16s %-16s %s\n", inst->label, inst->op, inst->arg1, inst->arg2, inst->result);
 		inst = inst->next;
 	}
 }
 
-void init()
+void initSemanticAnalysis()
 {
 	FuncSymbol *newSymbol = createFuncSymbol("putc", TYPE_CHAR);
 	addParam(&newSymbol, TYPE_CHAR);
@@ -70,20 +85,20 @@ void init()
 void processProgram(Program *node)
 {  
 	FILE *tty = fopen("/dev/tty", "r");
-	init();
+	initSemanticAnalysis();
 	
 	//if(node->type_decl != NULL)
      //   processList(node->type_decl);	
      
     if(node->var_decl != NULL)	
     	processList(node->var_decl);
-	enterScope();
+	//enterScope();
     	
    	if(node->function_def != NULL)
    		processList(node->function_def);
-   		
-   	printInstructions();
 	
+   	setInstructions(instructions);
+	finishSymbolTable();
 }
 
 void processList(List *node)
@@ -224,13 +239,13 @@ void processFunction(Function *node)
 
 	putFuncSymbol(funcSymbol);
 	processFuncBody(node->body);
-	leaveScope();
+	//leaveScope();
 }
 
 void processFuncBody(FunctionBody *node)
 {
 	processList(node->varDecl_list);
-	enterScope();
+	//enterScope();
 	processList(node->stmt_list);
 }
 
@@ -267,7 +282,8 @@ NodeValue processExpr(Expr *node)
 		{
 			returnValue.type = left.type;
 			returnValue.name = getNewTemp();
-			addInstruction(node->u.bexpr.op, left.name, right.name, returnValue.name);
+			
+			addInstruction("", node->u.bexpr.op, left.name, right.name, returnValue.name);
 			
 			return returnValue;
 		}
@@ -286,7 +302,8 @@ NodeValue processExpr(Expr *node)
 			return left;
 		
 		returnValue.name = getNewTemp();
-		addInstruction(node->u.uexpr.op, left.name, "", returnValue.name);
+		returnValue.type = left.type;
+		addInstruction("", node->u.uexpr.op, left.name, "", returnValue.name);
 		
 		return returnValue;
 		
@@ -296,24 +313,27 @@ NodeValue processExpr(Expr *node)
 		left = processExpr(node->u.uexpr.operand);
 		
 		if(left.type == -1)
-		{
-			returnValue.type = -1;
-			return returnValue;
-		}	
+			return left;
 		
-		return left;
+		returnValue.name = getNewTemp();
+		returnValue.type = left.type;
+		addInstruction("", node->u.preopexpr.op, left.name, "", returnValue.name);
+		
+		return returnValue;
+		
 		break;
 			
 	case POSTOPEXPR:
 		left = processExpr(node->u.uexpr.operand);
 		
 		if(left.type == -1)
-		{
-			returnValue.type = -1;
-			return returnValue;
-		}	
+			return left;
 		
-		return left;
+		returnValue.name = getNewTemp();
+		returnValue.type = left.type;
+		addInstruction("", node->u.postopexpr.op, left.name, "", returnValue.name);
+		
+		return returnValue;
 		
 		break;		
 		
@@ -334,7 +354,7 @@ NodeValue processExpr(Expr *node)
 		if(left.type == right.type)
 		{
 			returnValue = left;
-			addInstruction(OP_ASSIGN, right.name, "", returnValue.name);
+			addInstruction("", OP_ASSIGN, right.name, "", returnValue.name);
 			
 			return returnValue;
 		}
@@ -431,8 +451,11 @@ NodeValue processCall(Expr *call)
 		{
 			reportError(ARGUMENT_TYPE_ERR, call->line);
 			returnValue.type = -1;
+		
 			return returnValue;
 		}
+	
+		
 	
 		params1 = params1->next;
 		params2 = params2->next;
@@ -444,12 +467,25 @@ NodeValue processCall(Expr *call)
 		returnValue.type = -1;
 		return returnValue;
 	}
-		
 	
+	params1 = call->u.callexpr.param_list;
+	while(params1 != NULL)
+	{
+		returnValue = processExpr(params1->u.expr_list.expr);
+		
+		addInstruction("", OP_PARAM, returnValue.name, "", "");
+		
+		params1 = params1->next;
+	}
+	addInstruction("", OP_CALL, call->u.callexpr.id, "", "");
 }
 
 void processStmt(Stmt *node)
 {
+	NodeValue newNode;
+	NodeValue returnNode;
+	char *label1, *label2;
+
 	if(node == NULL)
 		return;
 		
@@ -459,18 +495,39 @@ void processStmt(Stmt *node)
 		processExpr(node->u.exprs.expr);
 		break;
 	case IFS:
-		processExpr(node->u.ifs.test);	
+		returnNode = processExpr(node->u.ifs.test);
+		label1 = getNewLabel();
+		
+		addInstruction("", OP_IF, returnNode.name, "0", label1);
 		processStmt(node->u.ifs.thenpart);
-		processStmt(node->u.ifs.elsepart);
-		processExpr(node->u.ifs.test);
+
+		if(node->u.ifs.elsepart != NULL)
+		{
+			label2 = getNewLabel();		
+
+			addInstruction("", OP_GOTO, "", "", label2);
+			addInstruction(label1, OP_NOP, "", "", "");
+			processStmt(node->u.ifs.elsepart);
+			addInstruction(label2, OP_NOP, "", "", "");
+		}else
+			addInstruction(label1, OP_NOP, "", "", "");
+
 		break;
 	case RETURNS:
 		processExpr(node->u.returns.value);
 		break;
 	case ITERS:
 		processExpr(node->u.iters.init);
-		processExpr(node->u.iters.cond);
+		label1 = getNewLabel();
+		addInstruction(label1, OP_NOP, "", "", "");
+		label2 = getNewLabel();
+		
+		returnNode = processExpr(node->u.iters.cond);
+		addInstruction("", OP_IF, returnNode.name, "0", label2);
 		processStmt(node->u.iters.body);
+		processExpr(node->u.iters.incr);
+		addInstruction("", OP_GOTO, "", "", label1);
+		addInstruction(label2, OP_NOP, "", "", "");
 		break;
 	case COMPOUNDS:
 		processList(node->u.compounds.stmt_list);

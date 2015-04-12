@@ -1,14 +1,11 @@
-void radixsort(int vetor[2], int tamanho) {
-    int i;
-    int b[5];
-    int maior;
-    int exp;
-
+int radixsort(int vetor, int tamanho) {	
 	/* comment */
     for (i = 0; i < tamanho; i++) {
         if (vetor[i] > maior)
     	    maior = vetor[i];
     }
+    
+    a = 'a';
 
 	/* comment */
 	a.field = 3;
@@ -27,4 +24,11 @@ void radixsort(int vetor[2], int tamanho) {
     	exp = exp * 10;
     }
     
+    foo(a);
+    foo(a, b, c);
+    
+}
+
+void foo()
+{
 }

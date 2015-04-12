@@ -9,6 +9,7 @@
 	#include "nodes.h"
 	#include "nodeStructs.h"	
 	#include "toXml.h"
+	#include "semanticAnalysis.h"
 	
 	extern int yylineno;
 	extern char *yytext;
@@ -443,11 +444,34 @@ int main(int argc, char *argv[])
 		FILE *tty = fopen("/dev/tty", "r");
 		printf("Syntax analysis complete. No errors found\n\n");
 		
-		setPrinter("tree.xml");
-		printProgram(root);
-		closePrinter();
+		if(strcmp(argv[1], "-a") == 0)
+		{
+			FILE *output = fopen(strcat(file_name, ".abs"), "w");
+			printTree(root, output);
+			fclose(output);
+			
+			return;
+		}
 		
 		processProgram(root);
+		
+		if(strcmp(argv[1], "-s") == 0)
+		{
+			//Print symbol table
+		}else if(strcmp(argv[1], "-i") == 0)
+		{
+			FILE *output = fopen(strcat(file_name, ".inr"), "w");
+			printInstructions(output);
+			fclose(output);
+			
+			return;
+		}else if(strcmp(argv[1], "-c") == 0)
+		{
+			FILE *output = fopen(strcat(file_name, ".asm"), "w");
+			printMIPS(output);
+			fclose(output);
+		}
+		
 		return 0;
 	}
 		

@@ -1,7 +1,5 @@
 #include "symbolTable.h"
 
-#define T_SIZE 53
-
 List_node* variablesTable[T_SIZE];
 FuncList_node* functionsTable[T_SIZE];
 
@@ -265,6 +263,11 @@ void leaveScope()
 			node = node->next;
 		}
 	}
+}
+
+void finishSymbolTable()
+{
+	setSymbolTables(variablesTable, functionsTable);
 }
 
 void printBinding()

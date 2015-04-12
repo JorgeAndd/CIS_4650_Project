@@ -16,11 +16,13 @@ typedef struct
 
 typedef struct Quadruples
 {
+	char *label;
 	i_operator op;
 	char *arg1, *arg2, *result;
 	struct Quadruples *next;
 }Quadruples;
 
+void printInstructions(FILE *output);
 void processProgram(Program *node);
 void processList(List *node);
 void processTypeDecl(TypeDecl *node);

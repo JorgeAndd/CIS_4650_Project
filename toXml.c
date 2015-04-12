@@ -3,22 +3,12 @@
 FILE *output;
 int depth;
 
-void setPrinter(char *filename)
+void printTree(Program *node, FILE *out)
 {
-	output = fopen(filename, "w");
 	depth = 0;
-}
+	output = out;
 
-void closePrinter()
-{
-	if(output)
-		fclose(output);
-}
-
-void printProgram(Program *node)
-{
 	fprintf(output, "<program>\n");
-	fflush(output);
   
 	if(node->type_decl != NULL)
         printList(node->type_decl);

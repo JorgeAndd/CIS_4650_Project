@@ -1,10 +1,12 @@
+#pragma once
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 #include "nodes.h"
 
-#pragma once
+#define T_SIZE 53
 
 typedef struct SParam
 {

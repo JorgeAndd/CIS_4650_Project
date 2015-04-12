@@ -7,7 +7,7 @@
 
 typedef enum {OP_ADD, OP_SUB, OP_MULT, OP_DIV, OP_MOD, OP_GT, OP_LT, OP_GE, OP_LE,
 		OP_DIFF, OP_EQUAL, OP_OR, OP_AND, OP_NOT, OP_MINUS, OP_PLUS, OP_INC, OP_DEC,
-		OP_PARAM, OP_ASSIGN} operator_t;
+		OP_PARAM, OP_CALL, OP_ASSIGN, OP_IF, OP_GOTO, OP_NOP} operator_t;
 
 typedef enum {TYPE_INT, TYPE_FLOAT, TYPE_CHAR, TYPE_VOID} types_t;
 

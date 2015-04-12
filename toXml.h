@@ -2,10 +2,8 @@
 #include "nodeStructs.h"
 #include <stdio.h>
 
-void setPrinter(char *filename);
-void closePrinter();
 void ident(int depthChange);
-void printProgram(Program *node);
+void printTree(Program *node, FILE *out);
 void closePrinter();
 void printList(List *node);
 void printTypeDecl(TypeDecl *node);
