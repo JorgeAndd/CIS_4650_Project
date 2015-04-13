@@ -1,0 +1,16 @@
+/*
+ * Author: Jorge Luiz Andrade
+ * #0906139
+ * 
+ * Type checking and function call checking
+ */
+
+int main(){
+   int a;
+   
+   a = 2.5;
+   
+   puti(2.5);
+   putc('a', 'b');
+}
+

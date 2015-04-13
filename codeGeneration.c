@@ -70,6 +70,10 @@ void printMIPS(FILE *out)
 		case OP_AND:
 			translateBooleanOp(inst);
 			break;
+		case OP_NOT:
+		case OP_MINUS:
+			translateUnaryOp(inst);
+			break;
 		case OP_IF:
 			translateIf(inst);
 			break;
@@ -145,7 +149,7 @@ void translateBasicOp(Quadruples *inst)
 	int valued;
 	float valuef;
 
-	valued = getSymbol(inst->result, &result);
+	getSymbol(inst->result, &result);
 	result_offset = result->loc;
 
 	if(result->type == TYPE_INT || result->type == TYPE_CHAR)
@@ -202,7 +206,7 @@ void translateBooleanOp(Quadruples *inst)
 	int valued;
 	float valuef;
 
-	valued = getSymbol(inst->result, &result);
+	getSymbol(inst->result, &result);
 	result_offset = result->loc;
 
 	if(result->type == TYPE_INT || result->type == TYPE_CHAR)
@@ -246,7 +250,7 @@ void translateBooleanOp(Quadruples *inst)
 		else if(inst->op == OP_OR)
 			fprintf(output, "or $t0, $t0, $t1\n");
 		else if(inst->op == OP_AND)
-			fprintf(output, "sle $t0, $t0, $t1\n");
+			fprintf(output, "and $t0, $t0, $t1\n");
 				
 		fprintf(output, "sw $t0, %d($sp)\n", result_offset);
 		
@@ -287,6 +291,9 @@ void translateUnaryOp(Quadruples *inst)
 	int result_offset, operand_offset;
 	int valued;
 	float valuef;
+	
+	getSymbol(inst->result, &result);
+	result_offset = result->loc;
 
 	if(result->type == TYPE_INT || result->type == TYPE_CHAR)
 	{
@@ -301,15 +308,13 @@ void translateUnaryOp(Quadruples *inst)
 			operand_offset = operand->loc;
 			fprintf(output, "lw $t0, %d($sp)\n", operand_offset);
 		}
-		
 		if(inst->op == OP_NOT)
 			fprintf(output, "seq $t0, $t0, 0\n");
 		else if(inst->op == OP_MINUS)
 			fprintf(output, "sub $t0, $zero, $t0\n");
 		else if(inst->op == OP_INC)
 		{
-			
-			fprintf(output, "sub $t0, $zero, $t0\n");
+			//Not implemented
 		}
 
 		fprintf(output, "sw $t0, %d($sp)\n", result_offset);

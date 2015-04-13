@@ -89,13 +89,16 @@ void processProgram(Program *node)
 	
 	//if(node->type_decl != NULL)
      //   processList(node->type_decl);	
-     
+    
+    //enterScope();
     if(node->var_decl != NULL)	
     	processList(node->var_decl);
-	//enterScope();
+	
     	
    	if(node->function_def != NULL)
    		processList(node->function_def);
+	
+	//leaveScope();
 	
    	setInstructions(instructions);
 	finishSymbolTable();

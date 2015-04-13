@@ -1,32 +1,29 @@
-int var;
+/*
+ * Author: Jorge Luiz Andrade
+ * #0906139
+ * 
+ * Fibonacci implementation
+ */
 
-typedef type;
-
-int main(){
-    int a;
-
-    while(1)
-        a++;
+int main()
+{
+	int n, first, second, next, c;
+ 	
+ 	n = 5;
+ 	first = 0;
+ 	second = 1;
+ 
+   for ( c = 0 ; c < n ; c = c + 1 )
+   {
+      if ( c <= 1 )
+         next = c;
+      else
+      {
+         next = first + second;
+         first = second;
+         second = next;
+      }
+      
+   }
+   
 }
-
-/* nonclosed
-
-int func1(int a){
-    for(i = 0; i < 10; i++){
-
-    }
-
-    a *= a;	/* incorrect operator */
-	int a; /* misplaced variable declaration */
-
-    return a;
-}
-
-int main(){
-    int a;
-
-    b = func1(a);
-
-/* missing closed braces */
-
-

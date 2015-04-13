@@ -1,27 +1,28 @@
 /*
  * Author: Jorge Luiz Andrade
  * #0906139
+ * 
+ * Basic operations
  */
 
-int main()
-{
-	int n, first, second, next, c;
- 	
- 	n = 5;
- 	first = 0;
- 	second = 1;
- 
-   for ( c = 0 ; c < n ; c = c + 1 )
-   {
-      if ( c <= 1 )
-         next = c;
-      else
-      {
-         next = first + second;
-         first = second;
-         second = next;
-      }
-      
-   }
-   
+int main(){
+    int a, b, c;
+
+	a = 1;
+	b = 2;
+	c = 3;
+
+	a = b + c;
+	a = b - c;
+	a = b * c;
+	a = b / c;
+	a = c % b;
+
+	a = b + 1;
+	a = 1 + b;
+	a = 1 + 2;	
+	
 }
+
+
+

@@ -11,3 +11,4 @@ void translateAssign(Quadruples *inst);
 void translateBasicOp(Quadruples *inst);
 void translateIf(Quadruples *inst);
 void translateBooleanOp(Quadruples *inst);
+void translateUnaryOp(Quadruples *inst);
