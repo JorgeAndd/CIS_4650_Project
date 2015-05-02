@@ -1,0 +1,431 @@
+%locations
+
+%{
+	#include <stdlib.h>
+	#include <stdio.h>
+	#include <stdarg.h>
+	#include <string.h>
+	
+	#include "nodes.h"
+	#include "nodeStructs.h"	
+	
+	extern int yylineno;
+	extern char *yytext;
+	extern char linebuf[150];
+	extern int tokenpos;
+	
+	Program *root;
+	
+%}
+
+%union{
+	int ival;
+	float fval;
+	char cval;
+	char *sval;
+	
+	Program *programval;
+	VarDecl *vardeclval;
+	TypeDecl *typedeclval;
+	List *listval;
+	Stmt *stmtval;
+	Expr *exprval;
+	Var *varval;
+	IdName *idval;
+	TypeName *typeval;
+	Function *funcval;
+	FunctionBody *funcbodyval;
+	Param *paramval;
+	
+}
+
+%type <programval> program
+%type <typedeclval> struct_decl
+%type <listval> type_decl_list_start type_decl_list call_param_list_start call_param_list 
+%type <listval> var_decl_list_start var_decl_list stmt_list function_def_list
+%type <listval> id_list
+%type <listval> param_list_start param_list
+%type <listval> type_decl var_decl id_name function_def param_decl stmt expr
+%type <stmtval> if_stmt return_stmt iter_stmt compound_stmt
+%type <exprval> function_call constant iter_expr
+%type <varval> var
+%type <typeval> type_name
+
+%type <funcbodyval> func_body
+
+%type <ival> INT
+%token <fval> FLOAT
+%token <cval> CHAR
+%type <sval> NAME
+
+%define parse.error verbose
+
+%token EQUAL DIFF GE LE
+%token AND OR NOT
+%token TYPEDEF ASSIGN SIZEOF
+%token TKINT TKFLOAT TKCHAR
+%token INC DEC
+%token IF ELSE FOR WHILE RETURN VOID STRUCT
+
+%token NAME
+%token INT
+
+%nonassoc THEN
+%nonassoc ELSE
+%nonassoc '('
+
+%right ASSIGN
+%left OR
+%left AND
+%left EQUAL DIFF
+%left '<' '>' GE LE
+%left '+' '-'
+%left '*' '/' '%' 
+%right SIZEOF NOT UNMINUS UNPLUS
+%left INC DEC
+%left '.' 
+%left '[' 
+
+%%
+program	: type_decl_list_start
+			{ $$ = Program_create($1, NULL, NULL); root = $$; }
+		| type_decl_list_start var_decl_list function_def_list
+			{ $$ = Program_create($1, $2, $3); root = $$; }
+		| type_decl_list_start var_decl_list
+			{ $$ = Program_create($1, $2, NULL); root = $$; }
+		| type_decl_list_start function_def_list
+			{ $$ = Program_create($1, NULL, $2); root = $$; }
+		;	
+
+/*Rule for the basics type: int, float and char	*/
+type_name	: TKINT 
+				{ $$ = PrimitiveTypeName_create(yylineno, TYPE_INT); }
+			| TKFLOAT
+				{ $$ = PrimitiveTypeName_create(yylineno, TYPE_FLOAT); }
+			| TKCHAR		
+				{ $$ = PrimitiveTypeName_create(yylineno, TYPE_FLOAT); }
+			| NAME
+				{ $$ = UserTypeName_create(yylineno, $1); }
+			;
+
+type_decl_list_start	: type_decl_list
+							{ $$ = $1; }
+						|
+							{ $$ = NULL; }
+						;
+
+type_decl_list	: type_decl ';'
+					{ $$ = $1; }
+				| type_decl_list type_decl ';'
+					{ $$ = Append($1, $2); }
+;
+
+type_decl	: TYPEDEF type_name NAME
+				{ TypeDecl *aux = Typedef_create(yylineno, $2, $3);
+				  $$ = TypeDeclList_create(yylineno, aux, NULL); }
+			| TYPEDEF struct_decl
+				{ TypeDecl *aux = $2; 
+				  $$ = TypeDeclList_create(yylineno, aux, NULL); }
+			;
+
+struct_decl	: STRUCT '{' var_decl_list_start '}' NAME
+				{ $$ = Struct_create(yylineno, $3, $5); }
+			;
+			
+var_decl_list_start	: var_decl_list
+						{ $$ = $1; }
+					|
+						{ $$ = NULL; }
+					;
+
+var_decl_list	: var_decl ';'
+					{ $$ = $1; }
+				| var_decl_list var_decl ';'
+					{ $$ = Append($1, $2); }
+				;
+
+var_decl	: type_name id_list
+				{ VarDecl *aux = VarDecl_create(yylineno, $1, $2);
+				  $$ = VarDeclList_create(yylineno, aux, NULL); }
+			;
+
+id_list	: id_name
+			{ $$ = $1; }
+		| id_list ',' id_name
+			{ $$ = Append($1, $3); }
+		;	
+		
+id_name : NAME
+			{ IdName *aux = SimpleIdName_create(yylineno, $1);
+  			  $$ = IdList_create(yylineno, aux, NULL); }
+		| NAME '[' INT ']'
+			{ IdName *aux = SubscriptIdName_create(yylineno, $1, $3); 
+			  $$ = IdList_create(yylineno, aux, NULL); }
+						
+function_def_list	: function_def
+						{ $$ = $1; }
+					| function_def_list function_def
+						{ $$ = Append($1, $2); }
+					;
+					
+function_def	: type_name NAME '(' param_list_start ')' '{' func_body '}'
+					{ Function *aux = Function_create(yylineno, $1, $2, $4, $7);
+					  $$ = FunctionList_create(yylineno, aux, NULL);  }
+				| VOID NAME '(' param_list_start ')' '{' func_body '}'
+					{ TypeName *new = PrimitiveTypeName_create(yylineno, TYPE_VOID);
+		   			  Function *aux = Function_create(yylineno, new, $2, $4, $7); 
+					  $$ = FunctionList_create(yylineno, aux, NULL);  }
+				;
+
+param_list_start	: param_list
+						{ $$ = $1; }
+					|
+						{ $$ = NULL; }
+					;
+
+param_list	: param_decl
+				{ $$ = $1; }
+			| param_list ',' param_decl
+				{ $$ = Append($1, $3); }
+			;
+
+param_decl	: type_name id_name
+				{ List *aux = $2;
+				  IdName *aux2 = aux->u.id_list.id; 
+   				  Param *aux3 = Param_create(yylineno, $1, aux2);
+   				  $$ =  ParamList_create(yylineno, aux3, NULL); }
+			;
+			
+func_body	: var_decl_list stmt_list
+				{ $$ = FunctionBody_create(yylineno, $1, $2); }
+			| var_decl_list
+				{ $$ = FunctionBody_create(yylineno, $1, NULL); }
+			| stmt_list
+				{ $$ = FunctionBody_create(yylineno, NULL, $1); }
+			|
+				{ $$ = FunctionBody_create(yylineno, NULL, NULL); }
+			;
+
+				
+stmt_list	: stmt
+				{ $$ = $1; }
+			| stmt_list stmt
+				{ $$ = Append($1, $2); }
+			;
+			
+
+stmt	: expr ';'
+			{ Stmt *aux = ExpressionStmt_create(yylineno, $1->u.expr_list.expr); 
+			  $$ = StmtList_create(yylineno, aux, NULL); } 
+		| compound_stmt
+			{ $$ = StmtList_create(yylineno, $1, NULL); } 
+		| if_stmt
+			{ $$ = StmtList_create(yylineno, $1, NULL); } 
+		| iter_stmt
+			{ $$ = StmtList_create(yylineno, $1, NULL); } 
+		| return_stmt
+			{ $$ = StmtList_create(yylineno, $1, NULL); } 
+		;
+		
+compound_stmt	: '{' stmt_list '}'
+					{ $$ = CompoundStmt_create(yylineno, $2); }
+				| '{' '}'
+					{ $$ = NULL; }
+;
+
+if_stmt : IF '(' expr ')' stmt			%prec THEN
+				{ Expr *aux = $3->u.expr_list.expr;  
+				  Stmt *aux2 = $5->u.stmt_list.stmt; 
+				  $$ = IfStmt_create(yylineno, aux, aux2, NULL); }
+			| IF '(' expr ')' stmt ELSE stmt
+				{ Expr *aux = $3->u.expr_list.expr;  
+				  Stmt *aux2 = $5->u.stmt_list.stmt;
+				  Stmt *aux3 = $7->u.stmt_list.stmt;
+				  $$ = IfStmt_create(yylineno, aux, aux2, aux3); }
+;
+
+iter_stmt	: WHILE '(' expr ')' stmt 
+				{ Expr *aux = $3->u.expr_list.expr;  
+				  Stmt *aux2 = $5->u.stmt_list.stmt; 
+   				  $$ = IterativeStmt_create(yylineno, NULL, aux, NULL, aux2); }
+			| FOR '(' iter_expr ';' iter_expr ';' iter_expr ')' stmt 
+				{ Stmt *aux = $9->u.stmt_list.stmt;
+				  $$ = IterativeStmt_create(yylineno, $3, $5, $7, aux); }
+			;
+
+iter_expr	: expr
+				{ $$ = $1->u.expr_list.expr; }
+			|
+				{ $$ = NULL; }
+			;		
+
+return_stmt	: RETURN expr ';'
+				{ Expr *aux = $2->u.expr_list.expr;   
+   				  $$ = ReturnStmt_create(yylineno, aux); }
+			| RETURN ';'
+				{ $$ = ReturnStmt_create(yylineno, NULL); }
+;
+			
+function_call	: NAME '(' call_param_list_start ')'
+					{ $$ = CallExpr_create(yylineno, $1, $3); }
+				;
+
+call_param_list_start	: call_param_list
+							{ $$ = $1; }
+						|  
+							{ $$ = NULL; }
+						;
+							
+call_param_list	: expr
+					{ $$ = $1; }
+				| call_param_list ',' expr
+					{ $$ = Append($1, $3); }
+				;
+	
+expr	: expr '+' expr
+			{ Expr *aux = BinaryExpr_create(yylineno, $1->u.expr_list.expr, OP_ADD, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| expr '-' expr
+			{ Expr *aux = BinaryExpr_create(yylineno, $1->u.expr_list.expr, OP_SUB, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| expr '*' expr
+			{ Expr *aux = BinaryExpr_create(yylineno, $1->u.expr_list.expr, OP_MULT, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| expr '/' expr
+			{ Expr *aux = BinaryExpr_create(yylineno, $1->u.expr_list.expr, OP_DIV, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| expr '%' expr
+			{ Expr *aux = BinaryExpr_create(yylineno, $1->u.expr_list.expr, OP_MOD, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| expr '>' expr
+			{ Expr *aux = BinaryExpr_create(yylineno, $1->u.expr_list.expr, OP_GT, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| expr '<' expr
+			{ Expr *aux = BinaryExpr_create(yylineno, $1->u.expr_list.expr, OP_LT, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| expr GE expr
+			{ Expr *aux = BinaryExpr_create(yylineno, $1->u.expr_list.expr, OP_GE, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| expr LE expr
+			{ Expr *aux = BinaryExpr_create(yylineno, $1->u.expr_list.expr, OP_LE, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| expr DIFF expr
+			{ Expr *aux = BinaryExpr_create(yylineno, $1->u.expr_list.expr, OP_DIFF, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| expr EQUAL expr
+			{ Expr *aux = BinaryExpr_create(yylineno, $1->u.expr_list.expr, OP_EQUAL, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| expr OR expr
+			{ Expr *aux = BinaryExpr_create(yylineno, $1->u.expr_list.expr, OP_OR, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| expr AND expr
+			{ Expr *aux = BinaryExpr_create(yylineno, $1->u.expr_list.expr, OP_AND, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| NOT expr 
+			{ Expr *aux = UnaryExpr_create(yylineno, OP_NOT, $2->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| '-' expr %prec UNMINUS
+			{ Expr *aux = UnaryExpr_create(yylineno, OP_MINUS, $2->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| '+' expr %prec UNPLUS
+			{ Expr *aux = UnaryExpr_create(yylineno, OP_PLUS, $2->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| '(' expr ')'
+			{ $$ = ExprList_create(yylineno, $2->u.expr_list.expr, NULL); }
+		| function_call
+			{ $$ = ExprList_create(yylineno, $1, NULL); }
+		| var ASSIGN expr
+			{ Expr *aux = AssignExpr_create(yylineno, $1, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| var
+			{ Expr *aux = VarExpr_create(yylineno, $1); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| expr INC
+			{ Expr *aux = PreOpExpr_create(yylineno, OP_INC, $1->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| expr DEC
+			{ Expr *aux = PreOpExpr_create(yylineno, OP_DEC, $1->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| INC expr
+			{ Expr *aux = PostOpExpr_create(yylineno, $2->u.expr_list.expr, OP_INC); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| DEC expr
+			{ Expr *aux = PostOpExpr_create(yylineno, $2->u.expr_list.expr, OP_DEC); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| SIZEOF '(' expr ')'
+			{ Expr *aux = SizeOfExpr_create(yylineno, $3->u.expr_list.expr); 
+			  $$ = ExprList_create(yylineno, aux, NULL); }
+		| constant
+			{ $$ = ExprList_create(yylineno, $1, NULL); }
+		;
+		
+var	: NAME             /* NAME is a string */
+		{ $$ = SimpleVar_create(yylineno, $1); }
+    | var '[' expr ']'
+   		{ $$ = SubscriptVar_create(yylineno, $1, $3->u.expr_list.expr); }
+    | var '.' var
+   		{ $$ = FieldVar_create(yylineno, $1, $3); }
+    ;
+	
+constant	: INT
+				{ $$ = IntExpr_create(yylineno, $1); }
+			| FLOAT
+				{ $$ = FloatExpr_create(yylineno, $1); }
+			| CHAR
+				{ $$ = CharExpr_create(yylineno, $1); }
+;	
+			
+%%
+
+extern FILE *yyin;
+
+void warning(char *s, int line)
+{
+	fprintf(stderr, "Warning:\t%d: %s\n", line, s);
+}
+
+int yyerror(char *s)
+{
+	int token_start;
+	int token_size;
+	
+	token_size = strlen(yytext);
+	token_start = tokenpos - token_size;
+
+	fprintf(stderr, "%d: %s:\n%s\n", yylineno, s, linebuf);
+	fprintf(stderr, "%*s", token_start, " ");
+	do
+	{
+		fprintf(stderr, "^");
+	}
+	while(--token_size > 0);
+	
+	fprintf(stderr, "\n");
+} 
+
+int yywrap()
+{
+        return 1;
+} 
+
+main()
+{
+	int result;
+	
+	result = yyparse();
+	
+	if(result == 0)
+	{
+		FILE *tty = fopen("/dev/tty", "r");
+		printf("Syntax analysis complete. No errors found\n");
+		
+		setPrinter("tree.xml");
+		printProgram(root);
+		closePrinter();
+		
+		processProgram(root);
+	}
+		
+	return 0;
+}
+

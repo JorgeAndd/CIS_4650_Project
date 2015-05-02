@@ -1,0 +1,17 @@
+#include "nodes.h"
+#include "nodeStructs.h"
+#include <stdio.h>
+
+void ident(int depthChange);
+void printProgram(Program *node);
+void closePrinter();
+void printList(List *node);
+void printTypeDecl(TypeDecl *node);
+void printTypeName(TypeName *node);
+void printExpr(Expr *node);
+void printVarDecl(VarDecl *node);
+void printFunction(Function *node);
+void printParam(Param *node);
+void printFuncBody(FunctionBody *node);
+void printStmt(Stmt *node);
+void printVar(Var *node);

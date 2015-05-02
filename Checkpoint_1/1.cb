@@ -1,0 +1,10 @@
+/*
+ * Author: Jorge Luiz Andrade
+ * #0906139
+ */
+
+typedef int a;
+typedef int b;
+
+typedef struct { int a; } reg;
+

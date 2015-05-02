@@ -4,6 +4,9 @@
  * 
  * Type checking and function call checking
  */
+ 
+int foo(float b)
+{} 
 
 int main(){
    int a;
@@ -12,5 +15,7 @@ int main(){
    
    puti(2.5);
    putc('a', 'b');
+   
+   foo(a);
 }
 

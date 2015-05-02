@@ -1,0 +1,318 @@
+/*
+ * Author: Jorge Luiz Andrade
+ * #0906139
+ */
+
+%locations
+
+%{
+	#include <stdlib.h>
+	#include <stdio.h>
+	#include <stdarg.h>
+	#include <string.h>
+	
+	#include "nodes.h"
+	
+	extern int yylineno;
+	extern char *yytext;
+	extern char linebuf[150];
+	extern int tokenpos;
+	
+	
+%}
+
+%union{
+	int ival;
+	float fval;
+	char cval;
+	char *sval;
+	
+	types_t typeval;
+	
+	TypeDecl *typedeclval;
+	TypeDeclList *typelistval;
+	Stmt *stmtval;
+	Expr *exprval;
+	ExprList *exprlistval;
+	Var *varval;
+	
+}
+
+%type <typedeclval> type_def
+%type <typelistval> type_decl type_decl_list
+%type <stmtval> stmt
+%type <stmtval> select_stmt
+%type <exprval> expr function_call constant
+%type <exprlistval> call_param call_param_list 
+%type <varval> var
+%type <typeval> type_name
+
+%type <ival> INT
+%token <fval> FLOAT
+%token <cval> CHAR
+%type <sval> NAME
+
+%define parse.error verbose
+
+%token EQUAL DIFF GE LE
+%token AND OR NOT
+%token TYPEDEF ASSIGN SIZEOF
+%token TKINT TKFLOAT TKCHAR
+%token INC DEC
+%token IF ELSE FOR WHILE RETURN VOID STRUCT
+
+%token NAME
+%token INT
+
+%nonassoc THEN
+%nonassoc ELSE
+%nonassoc '('
+
+%right ASSIGN
+%left OR
+%left AND
+%left EQUAL DIFF
+%left '<' '>' GE LE
+%left '+' '-'
+%left '*' '/' '%' 
+%right SIZEOF NOT UNMINUS UNPLUS
+%left INC DEC
+%left '.' 
+%left '[' 
+
+%%
+program	: type_decl_list var_decl_list function_def_list
+		| var_decl_list function_def_list
+		| function_def_list
+		|
+;
+
+/*Rule for the basics type: int, float and char	*/
+type_name	: TKINT 
+				{ $$ = TYPE_INT; }
+			| TKFLOAT
+				{ $$ = TYPE_FLOAT; }
+			| TKCHAR		
+				{ $$ = TYPE_FLOAT; }
+			;
+
+type_decl_list	: type_decl ';'
+				| type_decl_list type_decl ';'
+;
+
+type_decl	: TYPEDEF type_name NAME
+			| TYPEDEF struct_decl NAME
+			;
+
+struct_decl	: STRUCT '{' var_decl_list '}'
+			
+			
+var_decl_list	: var_decl ';'
+				| var_decl_list var_decl ';'
+;
+
+var_decl	: type_name id_list
+			| NAME id_list
+			;
+
+id_list	: id_name
+ 		| id_name ',' id_list
+		;
+		
+id_name : NAME
+		| NAME '[' INT ']'
+
+function_def_list	: function_def
+					| function_def_list function_def
+;
+					
+function_def	: type_name NAME '(' param_list ')' '{' func_body '}'
+				| VOID NAME '(' param_list ')' '{' func_body '}'
+;
+				
+param_list	: type_name id_name param_decl
+			| NAME id_name param_decl
+			| 
+;
+
+param_decl	: ',' type_name id_name param_decl
+			| ',' NAME id_name param_decl
+			|
+;
+			
+func_body	: var_decl_list stmt_list
+			| var_decl_list
+			| stmt_list
+			|
+;
+
+					
+stmt_list	: stmt
+			| stmt_list stmt
+;
+			
+
+stmt	: expr_stmt
+		| compound_stmt
+		| select_stmt
+			{ $$ = $1; }
+		| iter_stmt
+		| return_stmt
+;
+		
+expr_stmt	: expr ';'
+;
+
+compound_stmt	: '{' stmt_list '}'
+				| '{' '}'
+;
+
+select_stmt : IF '(' expr ')' stmt			%prec THEN
+				{ $$ = IfStmt_create($3, $5, NULL); }
+			| IF '(' expr ')' stmt ELSE stmt
+				{ $$ = IfStmt_create($3, $5, $7); }
+;
+
+iter_stmt	: WHILE '(' expr ')' stmt 
+			| FOR '(' iter_expr ';' iter_expr ';' iter_expr ')' stmt 
+			;
+
+iter_expr	: expr
+			|
+			;		
+
+return_stmt	: RETURN expr ';'
+			| RETURN ';'
+;
+			
+function_call	: NAME '(' call_param_list ')'
+					{ $$ = CallExpr_create($1, $3); }
+				;
+
+call_param_list	: expr call_param
+					{ $$ = ExprList_create($1, $2); }
+				;
+	
+call_param	: ',' expr call_param
+			{ $$ = ExprList_create($2, $3); }
+			|
+			{ $$ = ExprList_create($<exprval>0, NULL); }
+;
+				
+expr	: expr '+' expr
+			{ $$ = BinaryExpr_create($1, OP_ADD, $3); }
+		| expr '-' expr
+			{ $$ = BinaryExpr_create($1, OP_SUB, $3); }
+		| expr '*' expr
+			{ $$ = BinaryExpr_create($1, OP_MULT, $3); }
+		| expr '/' expr
+			{ $$ = BinaryExpr_create($1, OP_DIV, $3); }
+		| expr '%' expr
+			{ $$ = BinaryExpr_create($1, OP_MOD, $3); }
+		| expr '>' expr
+			{ $$ = BinaryExpr_create($1, OP_GT, $3); }
+		| expr '<' expr
+			{ $$ = BinaryExpr_create($1, OP_LT, $3); }
+		| expr GE expr
+			{ $$ = BinaryExpr_create($1, OP_GE, $3); }
+		| expr LE expr
+			{ $$ = BinaryExpr_create($1, OP_LE, $3); }
+		| expr DIFF expr
+			{ $$ = BinaryExpr_create($1, OP_DIFF, $3); }
+		| expr EQUAL expr
+			{ $$ = BinaryExpr_create($1, OP_EQUAL, $3); }
+		| expr OR expr
+			{ $$ = BinaryExpr_create($1, OP_OR, $3); }
+		| expr AND expr
+			{ $$ = BinaryExpr_create($1, OP_AND, $3); }
+		| NOT expr 
+			{ $$ = UnaryExpr_create(OP_NOT, $2); }
+		| '-' expr %prec UNMINUS
+			{ $$ = UnaryExpr_create(OP_MINUS, $2); }
+		| '+' expr %prec UNPLUS
+			{ $$ = UnaryExpr_create(OP_PLUS, $2); }
+		| '(' expr ')'
+			{ $$ = $2; }
+		| function_call
+			{ $$ = $1; }
+		| var ASSIGN expr
+			{ $$ = AssignExpr_create($1, $3); }
+		| var
+			{ $$ = VarExpr_create($1); }
+		| expr INC
+			{ $$ = PreOpExpr_create(OP_INC, $1); }
+		| expr DEC
+			{ $$ = PreOpExpr_create(OP_DEC, $1); }
+		| INC expr
+			{ $$ = PostOpExpr_create($2, OP_INC); }
+		| DEC expr
+			{ $$ = PostOpExpr_create($2, OP_DEC); }
+		| SIZEOF '(' expr ')'
+			{ $$ = SizeOfExpr_create($3); }
+		| SIZEOF '(' type_name ')'
+			{ $$ = SizeOfTypeExpr_create($3); }
+		| constant
+			{ $$ = $1; }
+;
+		
+var	: NAME             /* NAME is a string */
+		{ $$ = SimpleVar_create($1); }
+    | var '[' expr ']'
+   		{ $$ = SubscriptVar_create($1, $3); }
+    | var '.' var
+   		{ $$ = FieldVar_create($1, $3); }
+    ;
+	
+constant	: INT
+				{ $$ = IntExpr_create($1); }
+			| FLOAT
+				{ $$ = FloatExpr_create($1); }
+			| CHAR
+				{ $$ = CharExpr_create($1); }
+;	
+			
+%%
+
+extern FILE *yyin;
+
+void warning(char *s, int line)
+{
+	fprintf(stderr, "Warning:\t%d: %s\n", line, s);
+}
+
+int yyerror(char *s)
+{
+	int token_start;
+	int token_size;
+	
+	token_size = strlen(yytext);
+	token_start = tokenpos - token_size;
+
+	fprintf(stderr, "%d: %s:\n%s\n", yylineno, s, linebuf);
+	fprintf(stderr, "%*s", token_start, " ");
+	do
+	{
+		fprintf(stderr, "^");
+	}
+	while(--token_size > 0);
+	
+	fprintf(stderr, "\n");
+} 
+
+int yywrap()
+{
+        return 1;
+} 
+
+main()
+{
+	int result;
+	
+	result = yyparse();
+	
+	if(result == 0)
+		printf("Syntax analysis complete. No errors found\n");
+		
+	return 0;
+}
+

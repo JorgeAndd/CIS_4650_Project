@@ -1,0 +1,82 @@
+<program>
+
+
+	<functionList>
+		<function>
+			<primitiveType>
+				<type>0</type>
+			</primitiveType>
+
+			<name>func1</name>
+
+			<paramList>
+				<param>
+					<primitiveType>
+						<type>0</type>
+					</primitiveType>
+					<simpleID>
+						<name>a</name>
+					</simpleID>
+				</param>
+			</paramList>
+
+			<functionBody>
+				<stmtList>
+					<iter_statement>
+					<init>
+						<assignExpr>
+							<simpleVar>
+								<name> i </name>
+							</simpleVar>
+							<intExpr>
+								<value>0</value>
+							</intExpr>
+						</assignExpr>
+					</init>
+
+					<cond>
+						<binaryExpr>
+							<varExpr>
+								<simpleVar>
+									<name> i </name>
+								</simpleVar>
+							</varExpr>
+							<operator>6</operator>
+							<intExpr>
+								<value>10</value>
+							</intExpr>
+						</binaryExpr>
+					</cond>
+
+					<body>
+					</body>
+
+					</iter_statement>
+					<stmtList>
+						<expression_statement>
+							<assignExpr>
+								<simpleVar>
+									<name> a </name>
+								</simpleVar>
+								<varExpr>
+									<simpleVar>
+										<name>  </name>
+									</simpleVar>
+								</varExpr>
+							</assignExpr>
+						</expression_statement>
+						<stmtList>
+							<return_statement>
+								<varExpr>
+									<simpleVar>
+										<name> a </name>
+									</simpleVar>
+								</varExpr>
+							<return_statement>
+						</stmtList>
+					</stmtList>
+				</stmtList>
+			</functionBody>
+		</function>
+	</functionList>
+</program>

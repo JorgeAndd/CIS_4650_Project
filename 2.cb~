@@ -1,0 +1,22 @@
+/*
+ * Author: Jorge Luiz Andrade
+ * #0906139
+ * 
+ * Tesing chained operation
+ */
+
+int main(){
+    int a, b, c;
+
+	a = 1;
+	b = 2;
+	c = 3;
+	
+	/* Result must be 6*/
+	a = 1 + b - c * 2 / c + 5;
+	
+	
+}
+
+
+

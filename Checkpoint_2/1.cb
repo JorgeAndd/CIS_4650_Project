@@ -1,0 +1,46 @@
+/*
+ * Author: Jorge Luiz Andrade
+ * #0906139
+ */
+
+int a,b,c,d,e,f;
+float g;
+float h,i;
+
+int foo(int a)
+{
+}
+
+
+int main()
+{
+	a = foo(1);
+	g = foo(1);
+	foo(2.5);
+	foo(1, 2);
+	
+	a = 1.5 + 2.5 + x;
+	
+	a = a - b;
+	a = a + b - c * d % a + (b--) + e / f;
+	a++;
+	g++;
+	a = b++;
+	a = g++;
+	a = -a;
+	a = -g;
+	
+	a = a[2];
+	
+	a = b + foo(1);
+	a = b + foo(1, 2);
+	
+	a = foo(a + b);
+	a = foo(g);
+	a = foo(a + g);
+	
+	a = puti(1);
+	a = puti(1.5);
+	
+	g = puti(1);
+}

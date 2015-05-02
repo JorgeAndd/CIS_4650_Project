@@ -1,0 +1,29 @@
+/*
+ * Author: Jorge Luiz Andrade
+ * #0906139
+ * 
+ * Testing ifs and boolean operators
+ */
+ 
+int main(){
+	int a, b, c;
+	
+	a = b = c = 1;
+	
+	if(a == 1)
+		a = 2;
+	
+	if(b == 2)
+		b = 2;
+	else
+		b = 3;
+		
+	if((a == 1) && (b == 2) | (c == 2))
+		b = 4;
+		
+	if((a == 2) || (b == 2))	
+		b = 5;
+		
+	if(!(c == 2))
+		c = 3;
+}

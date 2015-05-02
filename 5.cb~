@@ -1,0 +1,31 @@
+/*
+ * Author: Jorge Luiz Andrade
+ * #0906139
+ * 
+ * Fibonacci implementation
+ */
+
+int main()
+{
+	int n, first, second, next, c;
+ 	float a;
+ 	
+ 	a = 2.5;
+ 	n = 5;
+ 	first = 0;
+ 	second = 1;
+ 
+   for ( c = 0 ; c < n ; c = c + 1 )
+   {
+      if ( c <= 1 )
+         next = c;
+      else
+      {
+         next = first + second;
+         first = second;
+         second = next;
+      }
+      
+   }
+   
+}

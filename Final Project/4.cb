@@ -1,0 +1,18 @@
+/*
+ * Author: Jorge Luiz Andrade
+ * #0906139
+ * 
+ * Testing loops
+ */
+
+int main(){
+    int a, b;
+    
+    b = 1;
+    for(a = 0; a < 5; a = a + 1)
+    	b = b * 2;
+    	
+    while(b > 1)
+    	b = b - 1; 
+}
+

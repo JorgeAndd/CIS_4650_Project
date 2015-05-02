@@ -1,0 +1,479 @@
+#include "toXml.h"
+
+FILE *output;
+int depth;
+
+void printTree(Program *node, FILE *out)
+{
+	depth = 0;
+	output = out;
+
+	fprintf(output, "<program>\n");
+  
+	if(node->type_decl != NULL)
+        printList(node->type_decl);
+        
+    fprintf(output, "\n");
+    
+    if(node->var_decl != NULL)
+    	printList(node->var_decl);
+    	
+   	fprintf(output, "\n");
+   	
+   	if(node->function_def != NULL)
+   		printList(node->function_def);
+
+	fprintf(output, "</program>\n");
+}
+
+void printList(List *node)
+{
+	if(node == NULL)
+		return;
+
+    ident(+1);
+
+    switch(node->kind)
+    {
+    case(EXPR_LIST):
+        fprintf(output, "<exprList>\n");
+        printExpr(node->u.expr_list.expr);
+        printList(node->next);
+        ident(0);
+        fprintf(output, "</exprList>\n");
+        break;
+
+    case(STMT_LIST):
+    	fprintf(output, "<stmtList>\n");
+    	printStmt(node->u.stmt_list.stmt);
+		printList(node->next);
+    	ident(0);
+    	fprintf(output, "</stmtList>\n");
+    	depth--;
+        break;
+
+    case(VAR_DECL_LIST):
+        fprintf(output, "<varDeclList>\n");
+        printVarDecl(node->u.varDecl_list.varDecl);
+    	printList(node->next);
+    	ident(0);
+        fprintf(output, "</varDeclList>\n");
+        depth--;
+        break;
+
+    case(TYPE_DECL_LIST):
+        fprintf(output, "<typeDeclList>\n");
+        printTypeDecl(node->u.typeDecl_list.type);
+        printList(node->next);
+        ident(0);
+        fprintf(output, "</typeDeclList>\n");
+        depth--;
+        break;
+
+    case(ID_LIST):
+        fprintf(output, "<idList>\n");
+        printIdName(node->u.id_list.id);
+        printList(node->next);
+        ident(0);
+        fprintf(output, "</idList>\n");
+        depth--;
+        break;
+
+    case(PARAM_LIST):
+        fprintf(output, "<paramList>\n");
+        printParam(node->u.param_list.param);
+        printList(node->next);
+        ident(0);
+        fprintf(output, "</paramList>\n");
+        depth--;
+        break;
+
+    case(FUNC_LIST):
+        fprintf(output, "<functionList>\n");
+        printFunction(node->u.func_list.function);
+        printList(node->next);
+        ident(0);
+        fprintf(output, "</functionList>\n");
+        depth--;
+        break;
+    }
+}
+
+void printTypeDecl(TypeDecl *node)
+{
+    ident(+1);
+
+    switch(node->kind)
+    {
+    case TYPE_T:
+        fprintf(output, "<typedef>\n");
+		ident(+1);
+		fprintf(output, "<name>%s</name>\n", node->u.type_def.name);
+		depth--;
+        printTypeName(node->u.type_def.type);
+        ident(0);
+        fprintf(output, "</typedef>\n");
+        depth--;
+        break;
+
+    case STRUCT_T:
+    	fprintf(output, "<struct>\n");
+		ident(+1);
+		fprintf(output, "<name>%s</name>\n", node->u.struct_def.name);
+    	depth--;
+    	printList(node->u.struct_def.var_decl);
+    	ident(0);
+    	fprintf(output, "</struct>\n");
+    	depth--;
+        break;
+    }
+
+}
+
+void printTypeName(TypeName *node)
+{
+    ident(+1);
+
+    switch(node->kind)
+    {
+    case PRIMITIVE:
+        fprintf(output, "<primitiveType>\n");
+        ident(+1);
+        fprintf(output, "<type>%d</type>\n", node->u.primitive.type);
+        ident(-1);
+        fprintf(output, "</primitiveType>\n");
+        depth--;
+        break;
+    case USER:
+        fprintf(output, "<userType>\n");
+        ident(+1);
+        fprintf(output, "<typeName>%s</typeName>\n", node->u.user.type_name);
+        ident(-1);
+        fprintf(output, "</userType>\n");
+        depth--;
+        break;
+    }
+}
+
+void printVarDecl(VarDecl *node)
+{
+	ident(+1);
+	
+	fprintf(output, "<varDecl>\n");
+	printTypeName(node->type_name);
+	fprintf(output, "\n");
+	printList(node->id_list);
+	ident(0);
+	fprintf(output, "</varDecl>\n");
+	depth--;
+}	
+
+printIdName(IdName *node)
+{
+	ident(+1);
+	
+	switch(node->kind)
+	{
+	case SIMPLE_ID:
+		fprintf(output, "<simpleID>\n");
+		ident(+1);
+		fprintf(output, "<name>%s</name>\n", node->u.simple.name);
+		ident(-1);
+		fprintf(output, "</simpleID>\n");
+		depth--;
+		break;
+	case SUBSCRIPT_ID:
+		fprintf(output, "<subscriptID>\n");
+		ident(+1);
+		fprintf(output, "<name>%s</name>\n", node->u.subscript.name);
+		ident(0);
+		fprintf(output, "<size>%d</size>\n", node->u.subscript.size);
+		ident(-1);
+		fprintf(output, "</subscriptID>\n");
+		depth--;
+		break;
+	}
+}
+
+void printFunction(Function *node)
+{
+	ident(+1);
+	
+	fprintf(output, "<function>\n");
+	printTypeName(node->type);
+	fprintf(output, "\n");
+	ident(0);
+	fprintf(output, "\t<name>%s</name>\n\n", node->name);
+	printList(node->param_list);
+	fprintf(output, "\n");
+	printFuncBody(node->body);
+	ident(0);
+	fprintf(output, "</function>\n");
+	depth--;
+}
+
+void printFuncBody(FunctionBody *node)
+{
+	ident(+1);
+	
+	fprintf(output, "<functionBody>\n");
+	printList(node->varDecl_list);
+	printList(node->stmt_list);
+
+	ident(0);
+	fprintf(output, "</functionBody>\n");
+	depth--;
+}
+
+void printParam(Param *node)
+{
+	ident(+1);
+	
+	fprintf(output, "<param>\n");
+	printTypeName(node->type);
+	printIdName(node->id);
+	ident(0);
+	fprintf(output, "</param>\n");
+	depth--;
+}
+
+void printExpr(Expr *node)
+{
+	if(node == NULL)
+		return;
+		
+	ident(+1);
+	
+	switch(node->kind)
+	{
+	case BEXPR:
+		fprintf(output, "<binaryExpr>\n");
+		printExpr(node->u.bexpr.operand1);
+		ident(+1);
+		fprintf(output, "<operator>%d</operator>\n", node->u.bexpr.op);
+		depth--;
+		printExpr(node->u.bexpr.operand2);
+		ident(0);
+		fprintf(output, "</binaryExpr>\n");
+		break;
+		
+	case UEXPR:
+		fprintf(output, "<unaryExpr>\n");
+		ident(+1);
+		fprintf(output, "<operator>%d</operator>\n", node->u.uexpr.op);
+		depth--;
+		printExpr(node->u.uexpr.operand);
+		ident(0);
+		fprintf(output, "</unaryExpr>\n");
+		break;
+
+	case PREOPEXPR:
+		fprintf(output, "<preOpExpr>\n");
+		ident(+1);
+		fprintf(output, "<operator>%d</operator>\n", node->u.preopexpr.op);
+		depth--;
+		printExpr(node->u.preopexpr.operand);
+		ident(0);
+		fprintf(output, "</preOpExpr>\n");
+		break;
+			
+	case POSTOPEXPR:
+		fprintf(output, "<postOpExpr>\n");
+		ident(+1);
+		fprintf(output, "<operator>%d</operator>\n", node->u.postopexpr.op);
+		depth--;
+		printExpr(node->u.postopexpr.operand);
+		ident(0);
+		fprintf(output, "</postOpExpr>\n");
+		break;		
+		
+	case CALLEXPR:
+		fprintf(output, "<callExpr>\n");
+		ident(+1);
+		fprintf(output, "<id>%s</id>\n", node->u.callexpr.id);
+
+		ident(0);		
+		fprintf(output, "<params>\n");
+		printList(node->u.callexpr.param_list);
+		ident(0);
+		fprintf(output, "</params>\n");
+		
+		ident(-1);
+		fprintf(output, "</callExpr>\n");
+		break;		
+	case ASSIGNEXPR:
+		fprintf(output, "<assignExpr>\n");
+		printVar(node->u.assignexpr.var);
+		printExpr(node->u.assignexpr.expr);
+		ident(0);
+		fprintf(output, "</assignExpr>\n");
+		break;		
+	case SIZEOFEXPR:
+		fprintf(output, "<sizeOfExpr>\n");
+		printExpr(node->u.sizeofexpr.size);
+		ident(0);
+		fprintf(output, "</sizeOfExpr>\n");
+		break;		
+	case SIZEOFTYPEEXPR:
+		fprintf(output, "<sizeOfType>\n");
+		ident(+1);
+		fprintf(output, "<type>%d</type>\n", node->u.sizeoftypeexpr.type);
+		ident(-1);
+		fprintf(output, "</sizeOfType>\n");
+		break;		
+	case VAREXPR:
+		fprintf(output, "<varExpr>\n");
+		printVar(node->u.varexpr.var);
+		ident(0);
+		fprintf(output, "</varExpr>\n");
+		break;
+	case INTEXPR:
+		fprintf(output, "<intExpr>\n");
+		ident(+1);
+		fprintf(output, "<value>%d</value>\n", node->u.intexpr.value);
+		ident(-1);
+		fprintf(output, "</intExpr>\n");
+		break;		
+	case FLOATEXPR:
+		fprintf(output, "<floatExpr>\n");
+		ident(+1);
+		fprintf(output, "<value>%f</value>\n", node->u.floatexpr.value);
+		ident(-1);
+		fprintf(output, "</floatExpr>\n");
+		break;
+	case CHAREXPR:
+		fprintf(output, "<charExpr>\n");
+		ident(+1);
+		fprintf(output, "<value>%c</value>\n", node->u.charexpr.value);
+		ident(-1);
+		fprintf(output, "</charExpr>\n");
+		break;
+	}
+	
+	depth--;	
+}
+
+void printStmt(Stmt *node)
+{
+	if(node == NULL)
+		return;
+		
+	ident(+1);
+	
+	switch(node->kind)
+	{
+	case EXPRS:
+		fprintf(output, "<expression_statement>\n");
+		printExpr(node->u.exprs.expr);
+		ident(0);
+		fprintf(output, "</expression_statement>\n");
+		break;
+	case IFS:
+		fprintf(output, "<if_statement>\n");
+
+		ident(+1);		
+		fprintf(output, "<test_part>\n");
+		printExpr(node->u.ifs.test);	
+		ident(0);
+		fprintf(output, "</test_part>\n\n");
+		
+		ident(0);
+		fprintf(output, "<then_part>\n");
+		printStmt(node->u.ifs.thenpart);
+		ident(0);
+		fprintf(output, "</then_part>\n\n");
+		
+		ident(0);
+		fprintf(output, "<else_part>\n");
+		printStmt(node->u.ifs.elsepart);
+		printExpr(node->u.ifs.test);
+		ident(0);
+		fprintf(output, "</else_part>\n");
+		
+		ident(0);
+		fprintf(output, "</if_statement>\n");
+		break;
+		
+	case RETURNS:
+		fprintf(output, "<return_statement>\n");
+		printExpr(node->u.returns.value);
+		ident(0);
+		fprintf(output, "<return_statement>\n");
+		break;
+	case ITERS:
+		fprintf(output, "<iter_statement>\n");
+
+		ident(0);
+		fprintf(output, "<init>\n");
+		printExpr(node->u.iters.init);
+		ident(0);
+		fprintf(output, "</init>\n\n");	
+
+		ident(0);
+		fprintf(output, "<cond>\n");
+		printExpr(node->u.iters.cond);
+		ident(0);
+		fprintf(output, "</cond>\n\n");	
+		
+		ident(0);
+		fprintf(output, "<body>\n");
+		printStmt(node->u.iters.body);
+		ident(0);
+		fprintf(output, "</body>\n\n");	
+		
+		ident(0);
+		fprintf(output, "</iter_statement>\n");
+		break;
+	case COMPOUNDS:
+		fprintf(output, "<compound_statement>\n");
+		printList(node->u.compounds.stmt_list);
+		ident(0);
+		fprintf(output, "<compound_statement>\n");
+		break;
+	}
+	
+	depth--;
+}
+
+void printVar(Var *node)
+{
+	ident(+1);
+	
+	switch(node->kind)
+	{
+	case SIMPLE:
+		fprintf(output, "<simpleVar>\n");
+		ident(+1);
+		fprintf(output, "<name> %s </name>\n", node->u.simple.name);	
+		ident(-1);
+		fprintf(output, "</simpleVar>\n");
+		break;
+	case SUBSCRIPT:
+		fprintf(output, "<subscriptVar>\n");
+		printVar(node->u.subscript.var);
+		printExpr(node->u.subscript.subscript);
+		ident(0);
+		fprintf(output, "</subscriptVar>\n");
+		break;
+	case FIELD:
+		fprintf(output, "<fieldVar>\n");
+		printVar(node->u.field.var);
+		printVar(node->u.field.var);
+		ident(0);
+		fprintf(output, "</fieldVar>\n");
+		break;
+	}
+	
+	depth--;
+}
+	
+
+void ident(int depthChange)
+{
+	depth += depthChange;
+	
+	int i;
+	
+    for(i = 0; i < depth; i++)
+        fprintf(output, "\t");
+}

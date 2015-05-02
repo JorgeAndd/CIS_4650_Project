@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1425852150 source:/home/jorge/Programming/CIS4650/nodes.c
+	<stdlib.h>
+	"nodes.h"
+
+1425852161 /home/jorge/Programming/CIS4650/nodes.h
+

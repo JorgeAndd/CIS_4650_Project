@@ -1,0 +1,28 @@
+/*
+ * Author: Jorge Luiz Andrade
+ * #0906139
+ * 
+ * Basic operations
+ */
+
+int main(){
+    int a, b, c;
+
+	a = 1;
+	b = 2;
+	c = 3;
+
+	a = b + c;
+	a = b - c;
+	a = b * c;
+	a = b / c;
+	a = c % b;
+
+	a = b + 1;
+	a = 1 + b;
+	a = 1 + 2;	
+	
+}
+
+
+

@@ -2501,6 +2501,7 @@ int main(int argc, char *argv[])
 		if(strcmp(argv[1], "-s") == 0)
 		{
 			//Print symbol table
+			printf("Printing symbol table not implemented");
 		}else if(strcmp(argv[1], "-i") == 0)
 		{
 			FILE *output = fopen(strcat(file_name, ".inr"), "w");

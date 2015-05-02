@@ -1,0 +1,258 @@
+<program>
+
+
+	<functionList>
+		<function>
+			<primitiveType>
+				<type>0</type>
+			</primitiveType>
+
+			<name>main</name>
+
+
+			<functionBody>
+				<varDeclList>
+					<varDecl>
+						<primitiveType>
+							<type>0</type>
+						</primitiveType>
+
+						<idList>
+							<simpleID>
+								<name>a</name>
+							</simpleID>
+							<idList>
+								<simpleID>
+									<name>b</name>
+								</simpleID>
+								<idList>
+									<simpleID>
+										<name>c</name>
+									</simpleID>
+								</idList>
+							</idList>
+						</idList>
+					</varDecl>
+					<varDeclList>
+						<varDecl>
+							<userType>
+								<typeName>flaot</typeName>
+							</userType>
+
+							<idList>
+								<subscriptID>
+									<name>a</name>
+									<size>5</size>
+								</subscriptID>
+							</idList>
+						</varDecl>
+					</varDeclList>
+				</varDeclList>
+				<stmtList>
+					<expression_statement>
+						<assignExpr>
+							<simpleVar>
+								<name> a </name>
+							</simpleVar>
+							<intExpr>
+								<value>1</value>
+							</intExpr>
+						</assignExpr>
+					</expression_statement>
+					<stmtList>
+						<expression_statement>
+							<assignExpr>
+								<simpleVar>
+									<name> b </name>
+								</simpleVar>
+								<intExpr>
+									<value>2</value>
+								</intExpr>
+							</assignExpr>
+						</expression_statement>
+						<stmtList>
+							<expression_statement>
+								<assignExpr>
+									<simpleVar>
+										<name> c </name>
+									</simpleVar>
+									<intExpr>
+										<value>3</value>
+									</intExpr>
+								</assignExpr>
+							</expression_statement>
+							<stmtList>
+								<expression_statement>
+									<assignExpr>
+										<simpleVar>
+											<name> a </name>
+										</simpleVar>
+										<binaryExpr>
+											<varExpr>
+												<simpleVar>
+													<name> b </name>
+												</simpleVar>
+											</varExpr>
+											<operator>0</operator>
+											<varExpr>
+												<simpleVar>
+													<name> c </name>
+												</simpleVar>
+											</varExpr>
+										</binaryExpr>
+									</assignExpr>
+								</expression_statement>
+								<stmtList>
+									<expression_statement>
+										<assignExpr>
+											<simpleVar>
+												<name> a </name>
+											</simpleVar>
+											<binaryExpr>
+												<varExpr>
+													<simpleVar>
+														<name> b </name>
+													</simpleVar>
+												</varExpr>
+												<operator>1</operator>
+												<varExpr>
+													<simpleVar>
+														<name> c </name>
+													</simpleVar>
+												</varExpr>
+											</binaryExpr>
+										</assignExpr>
+									</expression_statement>
+									<stmtList>
+										<expression_statement>
+											<assignExpr>
+												<simpleVar>
+													<name> a </name>
+												</simpleVar>
+												<binaryExpr>
+													<varExpr>
+														<simpleVar>
+															<name> b </name>
+														</simpleVar>
+													</varExpr>
+													<operator>2</operator>
+													<varExpr>
+														<simpleVar>
+															<name> c </name>
+														</simpleVar>
+													</varExpr>
+												</binaryExpr>
+											</assignExpr>
+										</expression_statement>
+										<stmtList>
+											<expression_statement>
+												<assignExpr>
+													<simpleVar>
+														<name> a </name>
+													</simpleVar>
+													<binaryExpr>
+														<varExpr>
+															<simpleVar>
+																<name> b </name>
+															</simpleVar>
+														</varExpr>
+														<operator>3</operator>
+														<varExpr>
+															<simpleVar>
+																<name> c </name>
+															</simpleVar>
+														</varExpr>
+													</binaryExpr>
+												</assignExpr>
+											</expression_statement>
+											<stmtList>
+												<expression_statement>
+													<assignExpr>
+														<simpleVar>
+															<name> a </name>
+														</simpleVar>
+														<binaryExpr>
+															<varExpr>
+																<simpleVar>
+																	<name> c </name>
+																</simpleVar>
+															</varExpr>
+															<operator>4</operator>
+															<varExpr>
+																<simpleVar>
+																	<name> b </name>
+																</simpleVar>
+															</varExpr>
+														</binaryExpr>
+													</assignExpr>
+												</expression_statement>
+												<stmtList>
+													<expression_statement>
+														<assignExpr>
+															<simpleVar>
+																<name> a </name>
+															</simpleVar>
+															<binaryExpr>
+																<varExpr>
+																	<simpleVar>
+																		<name> b </name>
+																	</simpleVar>
+																</varExpr>
+																<operator>0</operator>
+																<intExpr>
+																	<value>1</value>
+																</intExpr>
+															</binaryExpr>
+														</assignExpr>
+													</expression_statement>
+													<stmtList>
+														<expression_statement>
+															<assignExpr>
+																<simpleVar>
+																	<name> a </name>
+																</simpleVar>
+																<binaryExpr>
+																	<intExpr>
+																		<value>1</value>
+																	</intExpr>
+																	<operator>0</operator>
+																	<varExpr>
+																		<simpleVar>
+																			<name> b </name>
+																		</simpleVar>
+																	</varExpr>
+																</binaryExpr>
+															</assignExpr>
+														</expression_statement>
+														<stmtList>
+															<expression_statement>
+																<assignExpr>
+																	<simpleVar>
+																		<name> a </name>
+																	</simpleVar>
+																	<binaryExpr>
+																		<intExpr>
+																			<value>1</value>
+																		</intExpr>
+																		<operator>0</operator>
+																		<intExpr>
+																			<value>2</value>
+																		</intExpr>
+																	</binaryExpr>
+																</assignExpr>
+															</expression_statement>
+														</stmtList>
+													</stmtList>
+												</stmtList>
+											</stmtList>
+										</stmtList>
+									</stmtList>
+								</stmtList>
+							</stmtList>
+						</stmtList>
+					</stmtList>
+				</stmtList>
+			</functionBody>
+		</function>
+	</functionList>
+</program>

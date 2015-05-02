@@ -1,0 +1,220 @@
+<program>
+
+
+	<functionList>
+		<function>
+			<primitiveType>
+				<type>0</type>
+			</primitiveType>
+
+			<name>main</name>
+
+
+			<functionBody>
+				<varDeclList>
+					<varDecl>
+						<primitiveType>
+							<type>0</type>
+						</primitiveType>
+
+						<idList>
+							<simpleID>
+								<name>n</name>
+							</simpleID>
+							<idList>
+								<simpleID>
+									<name>first</name>
+								</simpleID>
+								<idList>
+									<simpleID>
+										<name>second</name>
+									</simpleID>
+									<idList>
+										<simpleID>
+											<name>next</name>
+										</simpleID>
+										<idList>
+											<simpleID>
+												<name>c</name>
+											</simpleID>
+										</idList>
+									</idList>
+								</idList>
+							</idList>
+						</idList>
+					</varDecl>
+				</varDeclList>
+				<stmtList>
+					<expression_statement>
+						<assignExpr>
+							<simpleVar>
+								<name> n </name>
+							</simpleVar>
+							<intExpr>
+								<value>5</value>
+							</intExpr>
+						</assignExpr>
+					</expression_statement>
+					<stmtList>
+						<expression_statement>
+							<assignExpr>
+								<simpleVar>
+									<name> first </name>
+								</simpleVar>
+								<intExpr>
+									<value>0</value>
+								</intExpr>
+							</assignExpr>
+						</expression_statement>
+						<stmtList>
+							<expression_statement>
+								<assignExpr>
+									<simpleVar>
+										<name> second </name>
+									</simpleVar>
+									<intExpr>
+										<value>1</value>
+									</intExpr>
+								</assignExpr>
+							</expression_statement>
+							<stmtList>
+								<iter_statement>
+								<init>
+									<assignExpr>
+										<simpleVar>
+											<name> c </name>
+										</simpleVar>
+										<intExpr>
+											<value>0</value>
+										</intExpr>
+									</assignExpr>
+								</init>
+
+								<cond>
+									<binaryExpr>
+										<varExpr>
+											<simpleVar>
+												<name> c </name>
+											</simpleVar>
+										</varExpr>
+										<operator>6</operator>
+										<varExpr>
+											<simpleVar>
+												<name> n </name>
+											</simpleVar>
+										</varExpr>
+									</binaryExpr>
+								</cond>
+
+								<body>
+									<compound_statement>
+										<stmtList>
+											<if_statement>
+												<test_part>
+													<binaryExpr>
+														<varExpr>
+															<simpleVar>
+																<name> c </name>
+															</simpleVar>
+														</varExpr>
+														<operator>8</operator>
+														<intExpr>
+															<value>1</value>
+														</intExpr>
+													</binaryExpr>
+												</test_part>
+
+												<then_part>
+													<expression_statement>
+														<assignExpr>
+															<simpleVar>
+																<name> next </name>
+															</simpleVar>
+															<varExpr>
+																<simpleVar>
+																	<name> c </name>
+																</simpleVar>
+															</varExpr>
+														</assignExpr>
+													</expression_statement>
+												</then_part>
+
+												<else_part>
+													<compound_statement>
+														<stmtList>
+															<expression_statement>
+																<assignExpr>
+																	<simpleVar>
+																		<name> next </name>
+																	</simpleVar>
+																	<binaryExpr>
+																		<varExpr>
+																			<simpleVar>
+																				<name> first </name>
+																			</simpleVar>
+																		</varExpr>
+																		<operator>0</operator>
+																		<varExpr>
+																			<simpleVar>
+																				<name> second </name>
+																			</simpleVar>
+																		</varExpr>
+																	</binaryExpr>
+																</assignExpr>
+															</expression_statement>
+															<stmtList>
+																<expression_statement>
+																	<assignExpr>
+																		<simpleVar>
+																			<name> first </name>
+																		</simpleVar>
+																		<varExpr>
+																			<simpleVar>
+																				<name> second </name>
+																			</simpleVar>
+																		</varExpr>
+																	</assignExpr>
+																</expression_statement>
+																<stmtList>
+																	<expression_statement>
+																		<assignExpr>
+																			<simpleVar>
+																				<name> second </name>
+																			</simpleVar>
+																			<varExpr>
+																				<simpleVar>
+																					<name> next </name>
+																				</simpleVar>
+																			</varExpr>
+																		</assignExpr>
+																	</expression_statement>
+																</stmtList>
+															</stmtList>
+														</stmtList>
+													<compound_statement>
+													<binaryExpr>
+														<varExpr>
+															<simpleVar>
+																<name> c </name>
+															</simpleVar>
+														</varExpr>
+														<operator>8</operator>
+														<intExpr>
+															<value>1</value>
+														</intExpr>
+													</binaryExpr>
+												</else_part>
+												</if_statement>
+											</stmtList>
+										<compound_statement>
+									</body>
+
+									</iter_statement>
+								</stmtList>
+							</stmtList>
+						</stmtList>
+					</stmtList>
+				</functionBody>
+			</function>
+		</functionList>
+</program>

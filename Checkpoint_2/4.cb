@@ -1,0 +1,6 @@
+int main(){
+    int a		/* missing semicolon */
+    chr b;		/* char spelled wrong */
+    float c,d,;	/* misused comma */
+}
+

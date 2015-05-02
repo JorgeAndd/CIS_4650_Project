@@ -1,0 +1,10 @@
+<program>
+		<type_decl_list>
+			<typedef_decl name = "b"/>
+				<primitive type = "0"/>
+			<type_decl_list>
+				<typedef_decl name = "a"/>
+					<primitive type = "0"/>
+			</type_decl_list>
+		</type_decl_list>
+</program>

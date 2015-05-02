@@ -1,0 +1,32 @@
+LABEL      OP	 ARG1             ARG2             RESULT
+           20	 1                                 c
+           20	 c                                 b
+           20	 b                                 a
+           10	 a                1                0tmp0
+           21	 0tmp0            0                L0
+           20	 2                                 a
+L0         23	                                   
+           10	 b                2                0tmp1
+           21	 0tmp1            0                L1
+           20	 2                                 b
+           22	                                   L2
+L1         23	                                   
+           20	 3                                 b
+L2         23	                                   
+           10	 a                1                0tmp2
+           10	 b                2                0tmp3
+           12	 0tmp2            0tmp3            0tmp4
+           21	 0tmp4            0                L3
+           20	 4                                 b
+L3         23	                                   
+           10	 a                2                0tmp5
+           10	 b                2                0tmp6
+           11	 0tmp5            0tmp6            0tmp7
+           21	 0tmp7            0                L4
+           20	 5                                 b
+L4         23	                                   
+           10	 c                2                0tmp8
+           13	 0tmp8                             0tmp9
+           21	 0tmp9            0                L5
+           20	 3                                 c
+L5         23	                                   

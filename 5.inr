@@ -1,0 +1,23 @@
+LABEL      OP	 ARG1             ARG2             RESULT
+           20	 2.500000                          a
+           20	 5                                 n
+           20	 0                                 first
+           20	 1                                 second
+           20	 0                                 c
+L0         23	                                   
+            6	 c                n                0tmp0
+           21	 0tmp0            0                L1
+            8	 c                1                0tmp1
+           21	 0tmp1            0                L2
+           20	 c                                 next
+           22	                                   L3
+L2         23	                                   
+            0	 first            second           0tmp2
+           20	 0tmp2                             next
+           20	 second                            first
+           20	 next                              second
+L3         23	                                   
+            0	 c                1                0tmp3
+           20	 0tmp3                             c
+           22	                                   L0
+L1         23	                                   
